@@ -11,6 +11,8 @@ namespace AdventOfCSharpCodeTest
         [TestFixture]
         public static class Test_Day13
         {
+            // Test cases pulled from Advent of Code.
+
             private static string test_timestamp = "939";
             private static string test_buses = "7,13,x,x,59,x,31,19";
 
