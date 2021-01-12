@@ -79,20 +79,20 @@ namespace AdventOfCSharpCode
         {
             try
             {
-                var passwords = File.ReadAllLines(
-                    string.Format("{0}\\{1}.txt",
-                    Info.DataPath,
-                    "Data_Day2"))
-                    .Select(s => GetPassword(s))
-                    .Where(s => s != null);
+                var passwords = DataProcessing.Import(2)
+                    ?.Select(s => GetPassword(s))
+                    ?.Where(s => s != null);
 
-                Console.WriteLine("Part 1 - {0}",
+                if (passwords != null)
+                {
+                    Console.WriteLine("Part 1 - {0}",
                     passwords.Where(s => s.Check_Part1)
                     .Count());
 
-                Console.WriteLine("Part 2 - {0}",
+                    Console.WriteLine("Part 2 - {0}",
                     passwords.Where(s => s.Check_Part2)
                     .Count());
+                }
             }
             catch
             {

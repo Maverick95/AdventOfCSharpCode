@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace AdventOfCSharpCode
@@ -250,13 +251,13 @@ namespace AdventOfCSharpCode
                 var ship_1 = new Ship_Part1();
                 var ship_2 = new Ship_Part2();
 
-                var data = File.ReadAllLines(string.Format("{0}\\{1}", Info.DataPath, "Data_Day12.txt"));
-                
+                var data = DataProcessing.Import(12)
+                    ?.Select(x => Instruction.Translate(x));
+
                 foreach(var d in data)
                 {
-                    var i = Instruction.Translate(d);
-                    ship_1.Update(i);
-                    ship_2.Update(i);
+                    ship_1.Update(d);
+                    ship_2.Update(d);
 
                 }
 
