@@ -3,11 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-<<<<<<< HEAD
-    <StartupObject>AdventOfCSharpCode.Day13.Day13</StartupObject>
-=======
     <StartupObject>AdventOfCSharpCode.Day10.Day10</StartupObject>
->>>>>>> cb98d39805a1a75f953064d69f5c197bc5c472b8
   </PropertyGroup>
 
 </Project>
