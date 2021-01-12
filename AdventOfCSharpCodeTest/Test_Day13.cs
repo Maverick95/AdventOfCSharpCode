@@ -25,6 +25,18 @@ namespace AdventOfCSharpCodeTest
                 Assert.That(test_data.Buses, Has.All.GreaterThanOrEqualTo(7));
                 Assert.That(test_data.Buses, Has.All.LessThanOrEqualTo(59));
             }
+
+            [Test]
+            public static void TestResults()
+            {
+                var test_results = new BusTimetableStorage(test_timestamp, test_buses).NextBus;
+
+                Assert.That(test_results, Has.Length.EqualTo(3));
+
+                Assert.That(test_results[0], Is.EqualTo(59));
+                Assert.That(test_results[1], Is.EqualTo(5));
+                Assert.That(test_results[2], Is.EqualTo(295));
+            }
         }
     }
 }
