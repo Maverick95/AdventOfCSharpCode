@@ -43,11 +43,17 @@ namespace AdventOfCSharpCode
 
         public class Day10
         {
-            public static void Main(string[] args)
+            public static Dictionary<int, int> Day10_Part1()
             {
                 var data = DataProcessing.Import(10);
                 var data_integers = data.Select(x => int.Parse(x)).ToArray();
-                var data_dict = Day10_Functions.AggregateVoltage(data_integers);
+                return Day10_Functions.AggregateVoltage(data_integers);
+
+            }
+
+            public static void Main(string[] args)
+            {
+                var data_dict = Day10_Part1();
 
                 foreach(var d in data_dict)
                 {
