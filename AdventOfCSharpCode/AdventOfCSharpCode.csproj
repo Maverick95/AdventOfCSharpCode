@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <StartupObject>AdventOfCSharpCode.Day10.Day10</StartupObject>
+    <StartupObject>AdventOfCSharpCode.Day12.Day12</StartupObject>
   </PropertyGroup>
 
 </Project>

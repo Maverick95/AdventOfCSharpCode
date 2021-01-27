@@ -244,26 +244,48 @@ namespace AdventOfCSharpCode
             }
         }
 
+        public class Day12_Processor: iDayProcessor
+        {
+            public string Part1(iDataProcessor dp)
+            {
+                dp.Reset();
+                var ship_1 = new Ship_Part1();
+
+                while (dp.isNext)
+                {
+                    var data = Instruction.Translate(dp.Next);
+                    ship_1.Update(data);
+
+                }
+
+                return string.Format("Part 1 result = {0}", ship_1.Manhattan.ToString());
+            }
+
+            public string Part2(iDataProcessor dp)
+            {
+                dp.Reset();
+                var ship_2 = new Ship_Part2();
+
+                while (dp.isNext)
+                {
+                    var data = Instruction.Translate(dp.Next);
+                    ship_2.Update(data);
+                }
+
+                return string.Format("Part 2 result = {0}", ship_2.Manhattan.ToString());
+
+            }
+        }
+
         public class Day12
         {
             public static void Main(string[] args)
             {
-                var ship_1 = new Ship_Part1();
-                var ship_2 = new Ship_Part2();
+                var data = new DataProcessor(12);
+                var day = new Day12_Processor();
 
-                var data = DataProcessing.Import(12)
-                    ?.Select(x => Instruction.Translate(x));
-
-                foreach(var d in data)
-                {
-                    ship_1.Update(d);
-                    ship_2.Update(d);
-
-                }
-
-                Console.WriteLine("Part 1 result = {0}", ship_1.Manhattan.ToString());
-                Console.WriteLine("Part 2 result = {0}", ship_2.Manhattan.ToString());
-
+                Console.WriteLine(day.Part1(data));
+                Console.WriteLine(day.Part2(data));
             }
         }
     }

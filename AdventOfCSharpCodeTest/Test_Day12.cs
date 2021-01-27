@@ -1,6 +1,8 @@
+using AdventOfCSharpCode;
 using AdventOfCSharpCode.Day12;
 using NUnit.Framework;
 using System.Linq;
+using FakeItEasy;
 
 namespace AdventOfCSharpCodeTest
 {
@@ -42,54 +44,53 @@ namespace AdventOfCSharpCodeTest
 
         }
 
-        [TestFixture(typeof(Ship_Part1), new string[] { }, 0, 0, 0)]
-        [TestFixture(typeof(Ship_Part1), new string[] { "F10", "N3", "F7", "R90", "F11" }, 17, -8, 25)]
-        [TestFixture(typeof(Ship_Part2), new string[] { }, 0, 0, 0)]
-        [TestFixture(typeof(Ship_Part2), new string[] { "F10", "N3", "F7", "R90", "F11" }, 214, -72, 286)]
-        public class Test_Ship<T>
-            where T : Ship, new()
+        [TestFixture(new string[] { }, 0, 0)]
+        [TestFixture(new string[] { "F10", "N3", "F7", "R90", "F11" }, 25, 286)]
+        public class Test_Ship
         {
-            private Instruction[] instructions { get; }
+            private iDataProcessor processor;
 
-            private int exp_east { get; }
-            private int exp_north { get; }
-            private int exp_manhattan { get; }
+            private string[] instructions;
 
-            private T ship { get; } = new T();
+            private int results_part1;
+            private int results_part2;
 
-            public Test_Ship(string[] instr, int end_east, int end_north, int end_manhattan)
+            public Test_Ship(string[] instr, int rp1, int rp2)
             {
-                instructions = instr.Select(x => Instruction.Translate(x)).ToArray();
-                exp_east = end_east;
-                exp_north = end_north;
-                exp_manhattan = end_manhattan;
+                processor = A.Fake<iDataProcessor>();
+
+                A.CallTo(() => processor.isNext).Returns(false);
+                A.CallTo(() => processor.Next).Returns(null);
+
+                instructions = instr;
+                results_part1 = rp1;
+                results_part2 = rp2;
             }
 
-            [OneTimeSetUp]
-            public void SetUp()
+            [SetUp]
+            public void Setup()
             {
-                foreach(var i in instructions)
+                // Need to mock backwards.
+
+                for (var i = 1; i <= instructions.Length; i++)
                 {
-                    ship.Update(i);
+                    A.CallTo(() => processor.isNext).Returns(true).Once();
+                    A.CallTo(() => processor.Next).Returns(instructions[instructions.Length - i]).Once();
                 }
             }
 
             [Test]
-            public void Test_East()
+            public void Test_Part1()
             {
-                Assert.That(ship.East, Is.EqualTo(exp_east));
+                var d12 = new Day12_Processor();
+                Assert.That(d12.Part1(processor), Is.EqualTo(string.Format("Part 1 result = {0}", results_part1)));
             }
 
             [Test]
-            public void Test_North()
+            public void Test_Part2()
             {
-                Assert.That(ship.North, Is.EqualTo(exp_north));
-            }
-            
-            [Test]
-            public void Test_Manhattan()
-            {
-                Assert.That(ship.Manhattan, Is.EqualTo(exp_manhattan));
+                var d12 = new Day12_Processor();
+                Assert.That(d12.Part2(processor), Is.EqualTo(string.Format("Part 2 result = {0}", results_part2)));
             }
         }
     }

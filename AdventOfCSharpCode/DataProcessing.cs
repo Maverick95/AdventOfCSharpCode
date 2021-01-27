@@ -11,6 +11,8 @@ namespace AdventOfCSharpCode
         public string Next { get; }
 
         public bool isNext { get; }
+
+        public void Reset();
     }
 
     public class DataProcessor : iDataProcessor

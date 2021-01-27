@@ -7,9 +7,8 @@ namespace AdventOfCSharpCode
 
     public interface iDayProcessor
     {
-        string Part1 { get; }
+        public string Part1(iDataProcessor dp);
 
-        string Part2 { get; }
-
+        public string Part2(iDataProcessor dp);
     }
 }
