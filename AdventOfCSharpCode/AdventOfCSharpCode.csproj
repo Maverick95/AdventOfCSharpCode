@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <StartupObject>AdventOfCSharpCode.Day12.Day12</StartupObject>
+    <TargetFramework>net5.0</TargetFramework>
+    <StartupObject>AdventOfCSharpCode.Day9.Day9</StartupObject>
   </PropertyGroup>
 
 </Project>
