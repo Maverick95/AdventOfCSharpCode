@@ -10,73 +10,89 @@ namespace AdventOfCSharpCode
         {
             private int _preamble_length { get; init; }
 
+            private Dictionary<int, int> _additions { get; init; }
+
+            private Queue<int> _preamble { get; init; }
+
             public Day9_Processor(int preamble_length)
             {
                 _preamble_length = preamble_length < 1 ? 1 : preamble_length;
+                _additions = new ();
+                _preamble = new ();
+            }
+
+            public void Reset()
+            {
+                _additions.Clear();
+                _preamble.Clear();
+            }
+
+            public bool IsAddition(int added)
+            {
+                return _additions.ContainsKey(added);
+            }
+
+            public void Enqueue(int added)
+            {
+                foreach (var pa in _preamble)
+                {
+                    var new_addition = pa + added;
+                    _additions.Remove(new_addition, out var new_volume);
+                    _additions.Add(new_addition, ++new_volume);
+                }
+
+                _preamble.Enqueue(added);
+            }
+
+            public void Dequeue()
+            {
+                var removed = _preamble.Dequeue();
+
+                foreach (var pa in _preamble)
+                {
+                    var removed_additions = pa + removed;
+                    if (_additions.Remove(removed_additions, out var removed_volume))
+                    {
+                        if (--removed_volume > 0)
+                        {
+                            _additions.Add(removed_additions, removed_volume);
+                        }
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Something has gone horribly wrong with your implementation.");
+                    }
+                }
             }
 
             public string Part1(iDataProcessor dp)
             {
                 dp.Reset();
-                Dictionary<int, int> store_additions = new ();
-                Queue<int> store_preamble = new ();
-                int line_index = 0;
+                Reset();
 
                 while (dp.isNext)
                 {
                     if (int.TryParse(dp.Next, out var added))
                     {
-                        if (line_index >= _preamble_length)
+                        if (dp.Index > _preamble_length)
                         {
-                            if (!store_additions.ContainsKey(added))
+                            if (!IsAddition(added))
                             {
-                                // This is the exit point.
-                                return added.ToString();
+                                return $"Result found! {added}";
                             }
 
-                            // Now you're removing a value from the preamble.
-
-                            var removed = store_preamble.Dequeue();
-
-                            foreach (var pa in store_preamble)
-                            {
-                                var removed_additions = pa + removed;
-                                if (store_additions.Remove(removed_additions, out var removed_volume))
-                                {
-                                    if (--removed_volume > 0)
-                                    {
-                                        store_additions.Add(removed_additions, removed_volume);
-                                    }
-                                }
-                                else
-                                {
-                                    throw new Exception();
-                                }
-                            }
+                            Dequeue();
                         }
 
-                        // Now you're adding a value into the preamble.
-
-                        foreach(var pa in store_preamble)
-                        {
-                            // Add new element into store_additions.
-                            var new_addition = pa + added;
-                            var new_volume = 0;
-                            store_additions.Remove(new_addition, out new_volume);
-                            store_additions.Add(new_addition, ++new_volume);
-                        }
-
-                        store_preamble.Enqueue(added);
-
-                        line_index++;
+                        Enqueue(added);
                     }
                     else
                     {
-                        throw new Exception();
+                        throw new ArgumentException("Your input data is rubbish.");
                     }
                 }
 
-                return "Part 1!";
+                return "No result found!";
             }
 
 
