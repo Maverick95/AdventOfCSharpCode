@@ -15,9 +15,6 @@ namespace AdventOfCSharpCodeTest
             [TestCase(49)]
             public void Part1_NumbersWithSuccess_AfterPreamble_1_to_25(int next)
             {
-                // Main source of confusion was determining where the props isNext, Next, Index,
-                // are called in the code.
-
                 var data_processor = A.Fake<iDataProcessor>();
 
                 // Collect sequence data.
@@ -58,9 +55,6 @@ namespace AdventOfCSharpCodeTest
             [TestCase(50)]
             public void Part1_NumbersWithFailure_AfterPreamble_1_to_25(int next)
             {
-                // Main source of confusion was determining where the props isNext, Next, Index,
-                // are called in the code.
-
                 var data_processor = A.Fake<iDataProcessor>();
 
                 // Collect sequence data.
@@ -102,9 +96,6 @@ namespace AdventOfCSharpCodeTest
             [TestCase(66)]
             public void Part1_NumbersWithSuccess_AfterPreamble_20_Then_2_to_25_Then_45(int next)
             {
-                // Main source of confusion was determining where the props isNext, Next, Index,
-                // are called in the code.
-
                 var data_processor = A.Fake<iDataProcessor>();
 
                 // Collect sequence data.
@@ -147,9 +138,6 @@ namespace AdventOfCSharpCodeTest
             [TestCase(65)]
             public void Part1_NumbersWithFailure_AfterPreamble_20_Then_2_to_25_Then_45(int next)
             {
-                // Main source of confusion was determining where the props isNext, Next, Index,
-                // are called in the code.
-
                 var data_processor = A.Fake<iDataProcessor>();
 
                 // Collect sequence data.
@@ -227,9 +215,9 @@ namespace AdventOfCSharpCodeTest
 
                 var result = day_processor.Part1(data_processor);
 
-                //A.CallTo(() => data_processor.isNext).MustHaveHappened(15, Times.Exactly);
-                //A.CallTo(() => data_processor.Index).MustHaveHappened(15, Times.Exactly);
-                //A.CallTo(() => data_processor.Next).MustHaveHappened(15, Times.Exactly);
+                A.CallTo(() => data_processor.isNext).MustHaveHappened(15, Times.Exactly);
+                A.CallTo(() => data_processor.Index).MustHaveHappened(15, Times.Exactly);
+                A.CallTo(() => data_processor.Next).MustHaveHappened(15, Times.Exactly);
 
                 Assert.That(result, Is.EqualTo($"Result found! 127"));
             }
