@@ -6,6 +6,14 @@ namespace AdventOfCSharpCode
 {
     namespace Day9
     {
+        public record ContiguousSum
+        {
+            public int min { get; set; }
+            public int max { get; set; }
+            public int sum { get; set; }
+            public int minPlusMax { get; set; }
+        }
+
         public class Day9_Processor: iDayProcessor
         {
             private int _preamble_length { get; init; }
@@ -14,17 +22,25 @@ namespace AdventOfCSharpCode
 
             private Queue<int> _preamble { get; init; }
 
+            private List<ContiguousSum> _sum_storage { get; init; }
+
+            private Dictionary<int, int> _sum_lookup { get; init; }
+
             public Day9_Processor(int preamble_length)
             {
                 _preamble_length = preamble_length < 1 ? 1 : preamble_length;
                 _additions = new ();
                 _preamble = new ();
+                _sum_storage = new ();
+                _sum_lookup = new ();
             }
 
             public void Reset()
             {
                 _additions.Clear();
                 _preamble.Clear();
+                _sum_storage.Clear();
+                _sum_lookup.Clear();
             }
 
             public bool IsAddition(int added)
@@ -42,6 +58,25 @@ namespace AdventOfCSharpCode
                 }
 
                 _preamble.Enqueue(added);
+
+                foreach (var s in _sum_storage)
+                {
+                    if (added < s.min) { s.min = added; }
+                    if (added > s.max) { s.max = added; }
+                    s.sum += added;
+                    s.minPlusMax = s.min + s.max;
+                    _sum_lookup.TryAdd(s.sum, s.minPlusMax);
+                }
+
+                _sum_storage.Add(new()
+                {
+                    min = added,
+                    max = added,
+                    sum = added,
+                    minPlusMax = 2 * added,
+                });
+
+                _sum_lookup.TryAdd(added, 2 * added);
             }
 
             public void Dequeue()
@@ -99,7 +134,40 @@ namespace AdventOfCSharpCode
             public string Part2(iDataProcessor dp)
             {
                 dp.Reset();
-                return "Part 2!";
+                Reset();
+
+                bool lookup_found = false;
+                int lookup = 0;
+
+                while (dp.isNext)
+                {
+                    if (int.TryParse(dp.Next, out var added))
+                    {
+                        if (dp.Index > _preamble_length)
+                        {
+                            if (!IsAddition(added))
+                            {
+                                lookup_found = true;
+                                lookup = added;
+                            }
+
+                            Dequeue();
+                        }
+
+                        Enqueue(added);
+
+                        if (lookup_found && _sum_lookup.TryGetValue(lookup, out var result))
+                        {
+                            return $"Result found! {result}";
+                        }
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Your input data is rubbish.");
+                    }
+                }
+
+                return "No result found!";
             }
         }
 

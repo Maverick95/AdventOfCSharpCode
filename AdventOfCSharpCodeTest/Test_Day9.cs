@@ -221,6 +221,54 @@ namespace AdventOfCSharpCodeTest
 
                 Assert.That(result, Is.EqualTo($"Result found! 127"));
             }
+
+            [Test]
+            public void Part2_LargerExample_Preamble5_ShouldMatch127_WithResult_62()
+            {
+                var data_processor = A.Fake<iDataProcessor>();
+
+                var data = new int[]
+                {
+                    35,     20,     15,     25,     47,
+                    40,     62,     55,     65,     95,
+                    102,    117,    150,    182,    127,    // 127 is the error number
+                    219,    299,    277,    309,    576
+                };
+
+                // Collect sequence data.
+
+                // isNext
+
+                var data_queue_isnext = new bool[21];
+                for (var i = 0; i < 20; i++) { data_queue_isnext[i] = true; }
+                data_queue_isnext[20] = false;
+
+                // Index
+
+                var data_queue_index = new int[20];
+                for (var i = 0; i < 20; i++) { data_queue_index[i] = i + 1; }
+
+                // Next
+
+                var data_queue_next = data.Select(x => x.ToString()).ToArray();
+
+                A.CallTo(() => data_processor.isNext).ReturnsNextFromSequence(data_queue_isnext);
+                A.CallTo(() => data_processor.Index).ReturnsNextFromSequence(data_queue_index);
+                A.CallTo(() => data_processor.Next).ReturnsNextFromSequence(data_queue_next);
+
+                var day_processor = new AdventOfCSharpCode.Day9.Day9_Processor(5);
+
+                var result = day_processor.Part2(data_processor);
+
+                // This will stop after processing 15 elements.
+
+                A.CallTo(() => data_processor.isNext).MustHaveHappened(15, Times.Exactly);
+                A.CallTo(() => data_processor.Index).MustHaveHappened(15, Times.Exactly);
+                A.CallTo(() => data_processor.Next).MustHaveHappened(15, Times.Exactly);
+
+                Assert.That(result, Is.EqualTo($"Result found! 62"));
+
+            }
         }
     }
 }
