@@ -50,6 +50,9 @@ namespace AdventOfCSharpCode
             A.CallTo(() => processor.Index).Returns(data.Length);
             A.CallTo(() => processor.Index).ReturnsNextFromSequence(data_index);
 
+            // Data
+            A.CallTo(() => processor.Data).Returns(data);
+
             return processor;
         }
 
@@ -100,6 +103,14 @@ namespace AdventOfCSharpCode
             get
             {
                 return _index;
+            }
+        }
+
+        public string[] Data
+        {
+            get
+            {
+                return _data;
             }
         }
 

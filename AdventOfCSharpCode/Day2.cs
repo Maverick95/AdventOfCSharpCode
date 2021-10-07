@@ -5,17 +5,17 @@ using System.Text.RegularExpressions;
 
 namespace AdventOfCSharpCode
 {
-    class Day2
+    namespace Day2
     {
-        private class Password
+        public class Password
         {
-            public char CheckChar { get; set; }
+            public char CheckChar { get; init; }
 
-            public int CheckIntegerInput1 { get; set; }
+            public int CheckIntegerInput1 { get; init; }
 
-            public int CheckIntegerInput2 { get; set; }
+            public int CheckIntegerInput2 { get; init; }
 
-            public string CheckPassword { get; set; }
+            public string CheckPassword { get; init; }
 
             public bool Check_Part1
             {
@@ -39,64 +39,74 @@ namespace AdventOfCSharpCode
                     .Count() == 1;
                 }
             }
-
-
         }
-
-        private static Regex rgx_password = new Regex("^[0-9]+-[0-9]+ [a-z]: [a-z]+$");
-
-        private static Password GetPassword(string s)
+        public class Day2_Processor : iDayProcessor
         {
-            if (rgx_password.IsMatch(s))
-            {
-                var s_data = s.Split(new char[] { '-', ' ', ':' });
-                int
-                    s_ll = int.Parse(s_data[0]),
-                    s_lu = int.Parse(s_data[1]);
-                
-                char
-                    s_cc = s_data[2][0];
+            private static Regex rgx_password = new Regex("^[0-9]+-[0-9]+ [a-z]: [a-z]+$");
 
-                if (s_lu >= s_ll)
+            private static Password GetPassword(string s)
+            {
+                if (rgx_password.IsMatch(s))
                 {
-                    return
-                        new Password
-                        {
-                            CheckChar = s_cc,
-                            CheckIntegerInput1 = s_ll,
-                            CheckIntegerInput2 = s_lu,
-                            CheckPassword = s_data[4]
-                        };
+                    var s_data = s.Split(new char[] { '-', ' ', ':' });
+                    int
+                        s_ll = int.Parse(s_data[0]),
+                        s_lu = int.Parse(s_data[1]);
+
+                    char
+                        s_cc = s_data[2][0];
+
+                    if (s_lu >= s_ll)
+                    {
+                        return
+                            new Password
+                            {
+                                CheckChar = s_cc,
+                                CheckIntegerInput1 = s_ll,
+                                CheckIntegerInput2 = s_lu,
+                                CheckPassword = s_data[4]
+                            };
+                    }
+
                 }
+
+                return null;
 
             }
 
-            return null;
+            public string Part1(iDataProcessor dp)
+            {
+                var result = dp.Data
+                    .Select(d => GetPassword(d))
+                    .Where(p => p is not null)
+                    .Where(p => p.Check_Part1)
+                    .Count();
+
+                return $"Result! {result}";
+            }
+
+            public string Part2(iDataProcessor dp)
+            {
+                var result = dp.Data
+                    .Select(d => GetPassword(d))
+                    .Where(p => p is not null)
+                    .Where(p => p.Check_Part2)
+                    .Count();
+
+                return $"Result! {result}";
+            }
 
         }
 
-        public static void Main(string[] args)
+        public class Day2
         {
-            try
+            public static void Main(string[] args)
             {
-                var passwords = DataProcessing.Import(2)
-                    ?.Select(s => GetPassword(s))
-                    ?.Where(s => s != null);
+                var data = new DataProcessor(2);
+                var day = new Day2_Processor();
 
-                if (passwords != null)
-                {
-                    Console.WriteLine("Part 1 - {0}",
-                    passwords.Where(s => s.Check_Part1)
-                    .Count());
-
-                    Console.WriteLine("Part 2 - {0}",
-                    passwords.Where(s => s.Check_Part2)
-                    .Count());
-                }
-            }
-            catch
-            {
-
+                Console.WriteLine(day.Part1(data));
+                Console.WriteLine(day.Part2(data));
             }
         }
     }
