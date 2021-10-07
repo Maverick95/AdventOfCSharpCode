@@ -6,4 +6,8 @@
     <StartupObject>AdventOfCSharpCode.Day9.Day9</StartupObject>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="FakeItEasy" Version="7.2.0" />
+  </ItemGroup>
+
 </Project>

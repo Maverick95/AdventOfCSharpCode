@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AdventOfCSharpCode
+﻿namespace AdventOfCSharpCode
 {
-
     public interface iDayProcessor
     {
         public string Part1(iDataProcessor dp);
