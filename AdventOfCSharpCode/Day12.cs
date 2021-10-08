@@ -30,65 +30,42 @@ namespace AdventOfCSharpCode
             I_MOVE_FORWARD
         }
 
-        public class Instruction
+        public record Instruction
         {
-            public InstructionType Type { get; private set; }
-            public int Value { get; private set; }
+            private static Dictionary<char, InstructionType> _instructions = new()
+            {
+                ['N'] = InstructionType.I_MOVE_NORTH,
+                ['E'] = InstructionType.I_MOVE_EAST,
+                ['S'] = InstructionType.I_MOVE_SOUTH,
+                ['W'] = InstructionType.I_MOVE_WEST,
+                ['L'] = InstructionType.I_TURN_LEFT,
+                ['R'] = InstructionType.I_TURN_RIGHT,
+                ['F'] = InstructionType.I_MOVE_FORWARD,
+            };
+
+            public InstructionType Type { get; init; }
+            public int Value { get; init; }
 
             public static Instruction Translate(string s)
             {
-                if (s == null || s.Length < 2)
+                if (s.Length >= 2 &&
+                    _instructions.TryGetValue(s[0], out var _type) &&
+                    int.TryParse(s.Substring(1), out var _value))
                 {
-                    throw new Exception("Instruction - incorrect format");
+                    Instruction result = new Instruction
+                    {
+                        Value = _value,
+                        Type = _type,
+                    };
+
+                    if (result.Type is not (InstructionType.I_TURN_LEFT or InstructionType.I_TURN_LEFT)
+                        || result.Value % 90 == 0)
+                    {
+                        return result;
+                    }
                 }
-
-                Instruction i_return = new Instruction();
-
-                int i_value;
-
-                if (!int.TryParse(s.Substring(1), out i_value))
-                {
-                    throw new Exception("Instruction - incorrect format");
-                }
-
-                i_return.Value = i_value;
-
-                switch (s[0])
-                {
-                    case 'N':
-                        i_return.Type = InstructionType.I_MOVE_NORTH;
-                        break;
-                    case 'E':
-                        i_return.Type = InstructionType.I_MOVE_EAST;
-                        break;
-                    case 'S':
-                        i_return.Type = InstructionType.I_MOVE_SOUTH;
-                        break;
-                    case 'W':
-                        i_return.Type = InstructionType.I_MOVE_WEST;
-                        break;
-                    case 'L':
-                        i_return.Type = InstructionType.I_TURN_LEFT;
-                        if (i_return.Value % 90 > 0)
-                        {
-                            throw new Exception("Instruction - incorrect format");
-                        }
-                        break;
-                    case 'R':
-                        i_return.Type = InstructionType.I_TURN_RIGHT;
-                        if (i_return.Value % 90 > 0)
-                        {
-                            throw new Exception("Instruction - incorrect format");
-                        }
-                        break;
-                    case 'F':
-                        i_return.Type = InstructionType.I_MOVE_FORWARD;
-                        break;
-                    default:
-                        throw new Exception("Instruction - incorrect format");
-                }
-
-                return i_return;
+                
+                throw new ArgumentException("Instruction - incorrect format");
             }
         }
 
@@ -97,13 +74,7 @@ namespace AdventOfCSharpCode
             public int East { get; protected set; } = 0;
             public int North { get; protected set; } = 0;
             
-            public int Manhattan
-            {
-                get
-                {
-                    return Math.Abs(East) + Math.Abs(North);
-                }
-            }
+            public int Manhattan => Math.Abs(East) + Math.Abs(North);
 
             public abstract void Update(Instruction i);
         }
@@ -255,10 +226,9 @@ namespace AdventOfCSharpCode
                 {
                     var data = Instruction.Translate(dp.Next);
                     ship_1.Update(data);
-
                 }
 
-                return string.Format("Part 1 result = {0}", ship_1.Manhattan.ToString());
+                return $"Part 1 result = {ship_1.Manhattan}";
             }
 
             public string Part2(iDataProcessor dp)
@@ -272,8 +242,7 @@ namespace AdventOfCSharpCode
                     ship_2.Update(data);
                 }
 
-                return string.Format("Part 2 result = {0}", ship_2.Manhattan.ToString());
-
+                return $"Part 2 result = {ship_2.Manhattan}";
             }
         }
 

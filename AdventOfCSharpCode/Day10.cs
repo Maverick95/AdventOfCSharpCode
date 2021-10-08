@@ -7,59 +7,84 @@ namespace AdventOfCSharpCode
 {
     namespace Day10
     {
-        public static class Day10_Functions
+        public class Day10_Processor: iDayProcessor
         {
-            private static void AddOrIncrease(Dictionary<int, int> d, int v)
+            private Dictionary<int, int> _difference { get; init; }
+            private int _voltage;
+
+            public Day10_Processor()
             {
-                if (d.ContainsKey(v))
+                _difference = new ();
+                _voltage = 0;
+            }
+
+            private void Reset()
+            {
+                _difference.Clear();
+                _voltage = 0;
+            }
+
+            private void AddOrIncrease(int v)
+            {
+                var _new_difference = v - _voltage;
+
+                if (_new_difference is >= 1 and <= 3)
                 {
-                    d[v]++;
+                    if (_difference.ContainsKey(_new_difference))
+                    {
+                        _difference[_new_difference]++;
+                    }
+                    else
+                    {
+                        _difference.Add(_new_difference, 1);
+                    }
+
+                    _voltage = v;
                 }
                 else
                 {
-                    d.Add(v, 1);
+                    throw new ArgumentException("Your input data is rubbish.");
                 }
             }
 
-            public static Dictionary<int, int> AggregateVoltage(int[] data)
+            public string Part1(iDataProcessor dp)
             {
-                var data_sort = data.OrderBy(x => x).ToArray();
+                _difference.Clear();
+                dp.Reset();
 
-                var data_diff = new Dictionary<int, int>();
+                var data = dp.Data
+                    .Select(d => int.Parse(d))
+                    .OrderBy(d => d);
 
-                int ds_prev = 0;
-
-                foreach(var ds in data_sort)
+                foreach (var d in data)
                 {
-                    AddOrIncrease(data_diff, ds - ds_prev);
-                    ds_prev = ds;
+                    AddOrIncrease(d);
                 }
 
-                AddOrIncrease(data_diff, 3);
+                AddOrIncrease(_voltage + 3);
 
-                return data_diff;
+                int _difference_1 = 0, _difference_3 = 0;
+                _difference.TryGetValue(1, out _difference_1);
+                _difference.TryGetValue(3, out _difference_3);
+
+                return $"Result! {_difference_1} * {_difference_3} = {_difference_1 * _difference_3}";
+            }
+
+            public string Part2(iDataProcessor dp)
+            {
+                return "Part 2!";
             }
         }
 
         public class Day10
         {
-            public static Dictionary<int, int> Day10_Part1()
-            {
-                var data = DataProcessing.Import(10);
-                var data_integers = data.Select(x => int.Parse(x)).ToArray();
-                return Day10_Functions.AggregateVoltage(data_integers);
-
-            }
-
             public static void Main(string[] args)
             {
-                var data_dict = Day10_Part1();
+                var data = new DataProcessor(10);
+                var day = new Day10_Processor();
 
-                foreach(var d in data_dict)
-                {
-                    Console.WriteLine("Dictionary element - {0} - {1}", d.Key, d.Value);
-                }
-
+                Console.WriteLine(day.Part1(data));
+                Console.WriteLine(day.Part2(data));
             }
         }
     }
