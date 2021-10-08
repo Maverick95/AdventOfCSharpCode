@@ -1,4 +1,5 @@
-﻿using AdventOfCSharpCode.Day13;
+﻿using AdventOfCSharpCode;
+using AdventOfCSharpCode.Day13;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -9,35 +10,18 @@ namespace AdventOfCSharpCodeTest
     namespace Day13
     {
         [TestFixture]
-        public static class Test_Day13
+        public class Test_Day13
         {
-            // Test cases pulled from Advent of Code.
-
-            private static string test_timestamp = "939";
-            private static string test_buses = "7,13,x,x,59,x,31,19";
-
-            [Test]
-            public static void TestCase()
+            [TestCase(new string[] { "939", "7,13,x,x,59,x,31,19" }, 59, 5)]
+            public void Part1_ShouldReturn_Correct_Result(string[] data, int expected_number, int expected_time)
             {
-                var test_data = new BusTimetableStorage(test_timestamp, test_buses);
+                var data_processor = DataProcessor.GenerateFakeDataProcessor(data);
+                var day_processor = new Day13_Processor();
+                var result = day_processor.Part1(data_processor);
 
-                Assert.That(test_data.EarliestTimestamp, Is.EqualTo(939));
+                var expected = $"Next bus = {expected_number} : Next time = {expected_time} : Multiplied = {expected_number * expected_time}";
 
-                Assert.That(test_data.Buses, Has.Length.EqualTo(5));
-                Assert.That(test_data.Buses, Has.All.GreaterThanOrEqualTo(7));
-                Assert.That(test_data.Buses, Has.All.LessThanOrEqualTo(59));
-            }
-
-            [Test]
-            public static void TestResults()
-            {
-                var test_results = new BusTimetableStorage(test_timestamp, test_buses).NextBus;
-
-                Assert.That(test_results, Has.Length.EqualTo(3));
-
-                Assert.That(test_results[0], Is.EqualTo(59));
-                Assert.That(test_results[1], Is.EqualTo(5));
-                Assert.That(test_results[2], Is.EqualTo(295));
+                Assert.That(result, Is.EqualTo(expected));
             }
         }
     }

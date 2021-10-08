@@ -7,62 +7,61 @@ namespace AdventOfCSharpCode
 {
     namespace Day13
     {
-        public class BusTimetableStorage
+        public class Day13_Processor : iDayProcessor
         {
-            public int EarliestTimestamp { get; private set; } = 0;
-
-            public int[] Buses { get; private set; }
-
-            public int[] NextBus
+            public string Part1(iDataProcessor dp)
             {
-                get
+                if (dp.Data.Length == 2)
                 {
-                    bool first = true;
-                    int next_time = 0; int next_bus = 0;
-
-                    foreach (var b in Buses)
+                    if (int.TryParse(dp.Data[0], out var _earliest))
                     {
-                        int b_remainder = b - (EarliestTimestamp % b);
+                        var _buses = dp.Data[1].Split(',')
+                            .Select(x =>
+                            {
+                                if (int.TryParse(x, out var x_return))
+                                {
+                                    return x_return;
+                                }
+                                else if (x == "x")
+                                {
+                                    return 0;
+                                }
+                                else
+                                {
+                                    throw new ArgumentException("Your input data is rubbish.");
+                                }
+                            })
+                            .Where(x => x > 0)
+                            .ToArray();
 
-                        if (first)
+                        var first = true;
+                        int next_time = 0, next_bus = 0;
+
+                        foreach (var b in _buses)
                         {
-                            next_time = b_remainder; next_bus = b;
-                            first = false;
+                            int b_remainder = b - (_earliest % b);
+
+                            if (first)
+                            {
+                                next_time = b_remainder; next_bus = b;
+                                first = false;
+                            }
+                            else if (b_remainder < next_time)
+                            {
+                                next_time = b_remainder; next_bus = b;
+                            }
                         }
-                        else if (b_remainder < next_time)
-                        {
-                            next_time = b_remainder; next_bus = b;
-                        }
+
+                        return $"Next bus = {next_bus} : Next time = {next_time} : Multiplied = {next_bus * next_time}";
                     }
-                    
-                    return new int[] { next_bus, next_time, next_bus * next_time };
                 }
+
+                throw new ArgumentException("Your input data is rubbish.");
             }
 
-            public BusTimetableStorage(string et, string b)
+            public string Part2(iDataProcessor dp)
             {
-                int et_return;
-
-                if (!int.TryParse(et, out et_return))
-                {
-                    throw new Exception("Invalid arguments");
-                }
-
-                EarliestTimestamp = et_return;
-
-                Buses = b.Split(',')
-                    .Select(x => x.Trim())
-                    .Select(x =>
-                    {
-                        int x_return;
-                        if (int.TryParse(x, out x_return))
-                        {
-                            return x_return;
-                        }
-                        return 0;
-                    })
-                    .Where(x => x > 0)
-                    .ToArray();
+                return "Something";
             }
         }
 
@@ -70,15 +69,11 @@ namespace AdventOfCSharpCode
         {
             public static void Main(string[] args)
             {
-                var data = DataProcessing.Import(13);
-                if (data.Length == 2)
-                {
-                    var data_results = new BusTimetableStorage(data[0], data[1]).NextBus;
-                    Console.WriteLine(string.Format("Part 1 result - Bus {0} in {1} minutes, {0} x {1} = {2}",
-                        data_results[0],
-                        data_results[1],
-                        data_results[2]));
-                }
+                var data = new DataProcessor(13);
+                var day = new Day13_Processor();
+
+                Console.WriteLine(day.Part1(data));
+                Console.WriteLine(day.Part2(data));
             }
         }
     }
