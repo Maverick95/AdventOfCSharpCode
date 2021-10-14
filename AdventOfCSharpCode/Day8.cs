@@ -7,49 +7,164 @@ namespace AdventOfCSharpCode
 {
     namespace Day8
     {
+        public class Day8_Processor: iDayProcessor
+        {
+            private Instruction[] _instructions;
+
+            public string Part1(iDataProcessor dp)
+            {
+                _instructions = dp.Data.Select(d => new Instruction(d))
+                    .ToList()
+                    .Union( new[] { new Instruction("nop +0") })
+                    .ToArray();
+                
+                int global_accumulator = 0, global_index = 0;
+
+                while (_instructions[global_index].State is InstructionState.NoExecution)
+                {
+                    _instructions[global_index].State = InstructionState.ExecutedFromStart;
+
+                    switch (_instructions[global_index].Type)
+                    {
+                        case InstructionType.Accumulate:
+                            global_accumulator += _instructions[global_index++].Value;
+                            break;
+                        case InstructionType.Jump:
+                            global_index += _instructions[global_index].Value;
+                            break;
+                        case InstructionType.NoOperation:
+                            global_index++;
+                            break;
+                    }
+
+                    if (global_index < 0 || global_index >= _instructions.Length)
+                    {
+                        throw new ArgumentException("Your input data is rubbish.");
+                    }
+                }
+
+                return $"Part 1 result is {global_accumulator}";
+            }
+
+            public string Part2(iDataProcessor dp)
+            {
+                _instructions = dp.Data.Select(d => new Instruction(d))
+                    .ToList()
+                    .Union(new[] { new Instruction("nop +0") })
+                    .ToArray();
+
+                // _sources maps destination indices to all the source indices that send them there
+                // with a single instruction.
+                
+                Dictionary<int, List<int>> _sources = new ();
+
+                var _index_source = 0;
+
+                foreach (var i in _instructions)
+                {
+                    var _index_destination = _index_source;
+
+                    if (i.Type == InstructionType.Jump)
+                    {
+                        _index_destination += i.Value;
+                    }
+                    else
+                    {
+                        _index_destination++;
+                    }
+
+                    if (_sources.ContainsKey(_index_destination))
+                    {
+                        _sources[_index_destination].Add(_index_source);
+                    }
+                    else
+                    {
+                        _sources.Add(_index_destination, new() { _index_source });
+                    }
+
+                    _index_source++;
+                }
+
+                Queue<int> _destinations = new ();
+                _destinations.Enqueue(_instructions.Length - 1);
+
+                while (_destinations.Any())
+                {
+                    var _dest = _destinations.Dequeue();
+                    _instructions[_dest].State = InstructionState.ExecutedFromEnd;
+                    if (_sources.ContainsKey(_dest))
+                    {
+                        foreach (var i in _sources[_dest])
+                        {
+                            _destinations.Enqueue(i);
+                        }
+                    }
+                }
+
+                // Theory is that if you now step through from the start, you'll hit one of these points
+                // if you switch instructions.
+
+                // Nearly done here.
+
+                int global_accumulator = 0, global_index = 0;
+
+                while (_instructions[global_index].State is InstructionState.NoExecution)
+                {
+                    _instructions[global_index].State = InstructionState.ExecutedFromStart;
+
+                    switch (_instructions[global_index].Type)
+                    {
+                        case InstructionType.Accumulate:
+                            global_accumulator += _instructions[global_index++].Value;
+                            break;
+                        case InstructionType.Jump:
+                            global_index += _instructions[global_index].Value;
+                            break;
+                        case InstructionType.NoOperation:
+                            global_index++;
+                            break;
+                    }
+
+                    if (global_index < 0 || global_index >= _instructions.Length)
+                    {
+                        throw new ArgumentException("Your input data is rubbish.");
+                    }
+                }
+
+                return "Part 2!";
+            }
+        }
+
         public enum InstructionType
         {
             Accumulate,
             Jump,
-            NoOperation
+            NoOperation,
         }
+
+        public enum InstructionState
+        {
+            NoExecution,
+            ExecutedFromStart,
+            ExecutedFromEnd,
+        }
+
         public class Instruction
         {
-            public InstructionType type { get; set; }
-
-            public int value { get; set; }
-        }
-
-        public class Day8
-        {
-
-            public static InstructionType GetInstructionType(string input)
+            private static Dictionary<string, InstructionType> _types = new()
             {
-                var return_value = InstructionType.NoOperation;
+                ["acc"] = InstructionType.Accumulate,
+                ["jmp"] = InstructionType.Jump,
+                ["nop"] = InstructionType.NoOperation,
+            };
 
-                switch (input)
-                {
-                    case "acc":
-                        return_value = InstructionType.Accumulate;
-                        break;
-                    case "jmp":
-                        return_value = InstructionType.Jump;
-                        break;
-                }
-
-                return return_value;
-            }
-
-            public static int GetValue(string input)
+            private static int GetValue(string i)
             {
-                int return_value = 0;
-
-                try
+                if (i.Length > 1)
                 {
-                    int value = int.Parse(input.Substring(1));
-                    int multiplier = 0;
+                    var multiplier = 0;
 
-                    switch (input[0])
+                    switch (i[0])
                     {
                         case '+':
                             multiplier = 1;
@@ -57,173 +172,49 @@ namespace AdventOfCSharpCode
                         case '-':
                             multiplier = -1;
                             break;
+                        default:
+                            throw new ArgumentException("Your input data is rubbish.");
                     }
 
-                    return_value = value * multiplier;
-                }
-                catch
-                {
-
-                }
-
-                return return_value;
-            }
-
-            public static Instruction GetInstruction(string input)
-            {
-                var input_data = input.Split(' ');
-
-                if (input_data.Length == 2)
-                {
-                    return new Instruction { type = GetInstructionType(input_data[0]), value = GetValue(input_data[1]) };
-                }
-
-                return null;
-            }
-
-            public static void Main_Part2_Recurse(ref List<int>[] connections, ref bool[] end, int index)
-            {
-                end[index] = true;
-
-                if (connections[index] != null)
-                {
-                    foreach (var i in connections[index])
+                    if (int.TryParse(i[1..], out var value))
                     {
-                        Main_Part2_Recurse(ref connections, ref end, i);
+                        return multiplier * value;
                     }
+                    else
+                    {
+                        throw new ArgumentException("Your input data is rubbish.");
+                    }
+                }
+                else
+                {
+                    throw new ArgumentException("Your input data is rubbish.");
                 }
             }
 
-            public static void Main(string[] args)
+            public InstructionType Type { get; init; }
+            public int Value { get; init; }
+            public InstructionState State { get; set; }
+
+            public Instruction(string i)
             {
-                try
+                var i_split = i.Split(' ');
+
+                if (i_split.Length == 2)
                 {
-                    var data = DataProcessing.Import(8).Select((x) => GetInstruction(x)).ToArray();
-
-                    var data_executed = data.Select((x) => false).ToArray();
-
-                    // Part 1.
-
-                    int global_accumulator = 0, global_index = 0;
-
-                    while (!data_executed[global_index])
+                    if (_types.TryGetValue(i_split[0], out var _type))
                     {
-                        data_executed[global_index] = true;
-
-                        switch (data[global_index].type)
-                        {
-                            case InstructionType.Accumulate:
-                                global_accumulator += data[global_index++].value;
-                                break;
-                            case InstructionType.Jump:
-                                global_index += data[global_index].value;
-                                break;
-                            case InstructionType.NoOperation:
-                                global_index++;
-                                break;
-                        }
+                        Type = _type;
+                        Value = GetValue(i_split[1]);
+                        State = InstructionState.NoExecution;
                     }
-
-                    Console.WriteLine("Part 1 result is {0}", global_accumulator);
-
-                    // Part 2.
-
-                    // Identify start / end points for instructions, create map to work backwards from the end.
-
-                    var data_connections = new List<int>[data.Length];
-
-                    for (int i = 0; i < data.Length; i++)
+                    else
                     {
-                        int j = i;
-
-                        switch (data[i].type)
-                        {
-                            case InstructionType.Accumulate:
-                            case InstructionType.NoOperation:
-                                j++;
-                                break;
-                            case InstructionType.Jump:
-                                j += data[i].value;
-                                break;
-                        }
-
-                        if (j >= 0 && j < data.Length)
-                        {
-                            if (data_connections[j] == null)
-                            {
-                                data_connections[j] = new List<int>();
-                            }
-
-                            data_connections[j].Add(i);
-                        }
+                        throw new ArgumentException("Your input data is rubbish.");
                     }
-
-                    // Identify end region of graph (any point where from you can reach the end).
-
-                    var data_end = data.Select((x) => false).ToArray();
-
-                    Main_Part2_Recurse(ref data_connections, ref data_end, data.Length - 1);
-
-                    // Now step through the function call again from start to finish, identify a valid change.
-
-                    var data_executed_2 = data.Select((x) => false).ToArray();
-
-                    global_accumulator = 0;
-                    global_index = 0;
-
-                    var check_change = true;
-
-                    while (!data_executed_2[global_index])
-                    {
-                        data_executed_2[global_index] = true;
-
-                        switch (data[global_index].type)
-                        {
-                            case InstructionType.Accumulate:
-                                global_accumulator += data[global_index++].value;
-                                break;
-                            case InstructionType.Jump:
-                                {
-                                    if (check_change && data_end[global_index + 1])
-                                    {
-                                        check_change = false;
-                                        global_index++;
-                                    }
-                                    else
-                                    {
-                                        global_index += data[global_index].value;
-                                    }
-                                }
-                                break;
-                            case InstructionType.NoOperation:
-                                {
-                                    if (check_change &&
-                                        global_index + data[global_index].value >= 0 &&
-                                        global_index + data[global_index].value < data.Length &&
-                                        data_end[global_index + data[global_index].value])
-                                    {
-                                        check_change = false;
-                                        global_index += data[global_index].value;
-                                    }
-                                    else
-                                    {
-                                        global_index++;
-                                    }
-                                }
-                                break;
-                        }
-
-                        if (!check_change && global_index == data.Length)
-                        {
-                            break;
-                        }
-                    }
-
-                    Console.WriteLine("Part 2 result is {0}", global_accumulator);
                 }
-                catch
+                else
                 {
-
+                    throw new ArgumentException("Your input data is rubbish.");
                 }
             }
         }
