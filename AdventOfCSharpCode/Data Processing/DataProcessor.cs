@@ -56,8 +56,7 @@ namespace AdventOfCSharpCode
             return processor;
         }
 
-        private static string DataPath { get; } =
-            "C:\\Users\\nick.emmerson\\Work Unit Only\\VS Projects\\Advent of Code\\Data";
+        private static string DataPath { get; } = "C:\\DEV\\AdventOfCSharpCode\\AdventOfCSharpCode\\Data";
 
         private string[] _data { get; init; }
         private int _index;
