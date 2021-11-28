@@ -1,5 +1,5 @@
 ﻿using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -74,10 +74,9 @@ namespace AdventOfCSharpCode
 
             }
 
-            public string Part1(IDataProcessor dp)
+            public string Part1(IEnumerable<string> dp)
             {
-                var result = dp.Data
-                    .Select(d => GetPassword(d))
+                var result = dp.Select(d => GetPassword(d))
                     .Where(p => p is not null)
                     .Where(p => p.Check_Part1)
                     .Count();
@@ -85,10 +84,9 @@ namespace AdventOfCSharpCode
                 return $"Result! {result}";
             }
 
-            public string Part2(IDataProcessor dp)
+            public string Part2(IEnumerable<string> dp)
             {
-                var result = dp.Data
-                    .Select(d => GetPassword(d))
+                var result = dp.Select(d => GetPassword(d))
                     .Where(p => p is not null)
                     .Where(p => p.Check_Part2)
                     .Count();
@@ -102,7 +100,7 @@ namespace AdventOfCSharpCode
         {
             public static void Main(string[] args)
             {
-                var data = new DataProcessor(2);
+                var data = new FileDataProcessor(2);
                 var day = new Day2_Processor();
 
                 Console.WriteLine(day.Part1(data));

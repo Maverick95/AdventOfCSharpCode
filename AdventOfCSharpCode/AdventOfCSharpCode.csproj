@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <StartupObject>AdventOfCSharpCode.Day17.Day17</StartupObject>
+    <StartupObject>AdventOfCSharpCode.Day24.Day24</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>

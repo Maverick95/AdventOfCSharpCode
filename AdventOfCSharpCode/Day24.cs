@@ -1,208 +1,190 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
+using AdventOfCSharpCode.Helpers;
 
 namespace AdventOfCSharpCode
 {
     namespace Day24
     {
-        public class Coords
+        public class Day24_Processor : IDayProcessor
         {
-            private int x = 0;
-            private int y = 0;
-
-            public int[] key
+            private static int[] CreateTilePosition(string input)
             {
-                get
+                Dictionary<string, int[]> updates = new()
                 {
-                    return new int[] { x, y };
-                }
-            }
+                    { "nw", new[] { -1, 0 } },
+                    { "ne", new[] { 0, 1 } },
+                    { "sw", new[] { 0, -1 } },
+                    { "se", new[] { 1, 0 } },
+                    { "w", new[] { -1, -1 } },
+                    { "e", new[] { 1, 1 } },
+                };
 
-            public Coords(int i_x, int i_y)
-            {
-                x = i_x; y = i_x;
-            }
+                int[] result = new int[2] { 0, 0 };
 
-            public Coords(string s)
-            {
-                // e, se, sw, w, nw, and ne
+                var inputs = input.Replace("w", "w,").Replace("e", "e,").Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-                while (s.Length > 0)
+                foreach (var i in inputs)
                 {
-                    switch (s[0])
+                    if (!updates.TryGetValue(i, out var update))
                     {
-
-                        case 'e':
-                        case 'w':
-                            {
-                                switch (s[0])
-                                {
-                                    case 'e':
-                                        x++; y++; break;
-
-                                    case 'w':
-                                        x--; y--; break;
-                                }
-                            }
-
-                            s = s.Remove(0, 1);
-                            break;
-
-                        case 'n':
-                        case 's':
-                            {
-                                switch (s.Substring(0, 2))
-                                {
-                                    case "nw":
-                                        x--; break;
-
-                                    case "ne":
-                                        y++; break;
-
-                                    case "sw":
-                                        y--; break;
-
-                                    case "se":
-                                        x++; break;
-
-                                    default:
-                                        throw new Exception();
-                                }
-                            }
-
-                            s = s.Remove(0, 2);
-                            break;
-
-                        default:
-                            throw new Exception();
-
+                        throw new ArgumentException("Your input is invalid.");
                     }
+
+                    result[0] += update[0];
+                    result[1] += update[1];
                 }
+
+                return result;
             }
-        }
 
-        public class Tile
-        {
-            public bool Flipped { get; set; }
-
-            public int Flipped_Neighbours { get; set; }
-        }
-
-        public class ArrayComparer : IEqualityComparer<int[]>
-        {
-            public bool Equals(int[] x, int[] y)
+            private class TileNeighbourCollection : IEnumerable<int[]>
             {
-                if (x.Length == y.Length)
+                private readonly TileNeighbourEnumerator _enumerator;
+                public TileNeighbourCollection(int[] coord)
                 {
-                    for (int i = 0; i < x.Length; i++)
+                    _enumerator = new(coord);
+                }
+
+                IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+                public IEnumerator<int[]> GetEnumerator()
+                {
+                    return _enumerator;
+                }
+
+                private class TileNeighbourEnumerator : IEnumerator<int[]>
+                {
+                    private static List<int[]> _updates = new()
                     {
-                        if (x[i] != y[i])
+                        new[] { -1, -1 },
+                        new[] { -1, 0 },
+                        new[] { 0, 1 },
+                        new[] { 1, 1 },
+                        new[] { 1, 0 },
+                        new[] { 0, -1 }
+                    };
+
+                    private int[] _coord = null;
+                    private int _index = 0;
+                    private readonly int[] _coord_original;
+
+                    public TileNeighbourEnumerator(int[] coord)
+                    {
+                        if (coord.Length is not 2)
                         {
-                            return false;
+                            throw new ArgumentException("Your input was invalid.");
+                        }
+
+                        _coord_original = new int[2];
+                        coord.CopyTo(_coord_original, 0);
+                    }
+
+                    object IEnumerator.Current
+                    {
+                        get => Current;
+                    }
+
+                    public int[] Current
+                    {
+                        get
+                        {
+                            if (_coord is null) { return null; }
+                            var result = new int[2];
+                            _coord.CopyTo(result, 0);
+                            return result;
                         }
                     }
 
-                    return true;
-                }
+                    public bool MoveNext()
+                    {
+                        if (_index < _updates.Count)
+                        {
+                            _coord = new int[2];
+                            _coord_original.CopyTo(_coord, 0);
+                            _coord[0] += _updates[_index][0];
+                            _coord[1] += _updates[_index][1];
+                            _index++;
+                            return true;
+                        }
 
-                return false;
-            }
+                        return false;
+                    }
 
-            public int GetHashCode(int[] obj) => Helpers.Hash(obj);
-        }
+                    public void Reset()
+                    {
+                        _coord = null;
+                        _index = 0;
+                    }
 
-        public class HashTableCoords
-        {
-            // The bool in the dictionary indicates whether the tile is flipped.
-
-            private Dictionary<int[], Tile> coords { get; } = new Dictionary<int[], Tile>(new ArrayComparer());
-
-            public int Flipped
-            {
-                get
-                {
-                    return coords.Where(k => k.Value.Flipped).Count();
-                }
-            }
-
-            public int Count
-            {
-                get
-                {
-                    return coords.Count;
+                    public void Dispose() { }
                 }
             }
 
-            public void Empty()
+            private readonly Dictionary<int[], Coordinate> _coords = new(new CoordinateComparer(2, CoordinateComparer.GetHashCodeSum));
+            private readonly int _iterations;
+
+            private void Reset()
             {
-                coords.Clear();
+                _coords.Clear();
             }
 
-            public void Update(Coords c)
+            private void Update(int[] input)
             {
-                var c_key = c.key;
-                Tile c_value = null;
-
-                if (coords.TryGetValue(c_key, out c_value))
+                if (_coords.TryGetValue(input, out var coord))
                 {
-                    c_value.Flipped = !c_value.Flipped;
-
+                    coord.active = !coord.active;
                 }
                 else
                 {
-                    coords.Add(c_key, new Tile() { Flipped = true, Flipped_Neighbours = 0 });
+                    _coords.Add(input, new()
+                    {
+                        active = false,
+                        neighbours = 0,
+                    });
                 }
             }
 
-            public void DailyArt()
+            private void DailyArt()
             {
                 // Reset neighbours.
 
-                foreach(var c in coords)
+                foreach (var c in _coords.Values)
                 {
-                    c.Value.Flipped_Neighbours = 0;
+                    c.neighbours = 0;
                 }
 
                 // Calculate neighbours afresh. This includes adding / tracking new elements.
 
-                Dictionary<int[], Tile> coords_new = new Dictionary<int[], Tile>(new ArrayComparer());
+                Dictionary<int[], Coordinate> _coords_new = new(new CoordinateComparer(2, CoordinateComparer.GetHashCodeSum));
 
-                int[][] coords_change = new int[][]
-                {
-                    new int[] { -1, -1 },
-                    new int[] { -1, 0 },
-                    new int[] { 0, 1 },
-                    new int[] { 1, 1 },
-                    new int[] { 1, 0 },
-                    new int[] { 0, -1 }
-                };
 
-                foreach (var c in coords)
+                foreach (var c in _coords)
                 {
                     // If tile is flipped, need to apply count to neighbours.
 
-                    if (c.Value.Flipped)
+                    if (!c.Value.active)
                     {
-                        foreach(var d in coords_change)
+                        TileNeighbourCollection c_neighbours = new(c.Key);
+                        foreach (var n in c_neighbours)
                         {
-                            int[] c_key = new int[] { c.Key[0] + d[0], c.Key[1] + d[1] };
-
-                            Tile c_value;
-
-                            if (coords.TryGetValue(c_key, out c_value))
+                            if (_coords.TryGetValue(n, out var n_value))
                             {
-                                c_value.Flipped_Neighbours += 1;
+                                n_value.neighbours++;
                             }
-                            else if (coords_new.TryGetValue(c_key, out c_value))
+                            else if (_coords_new.TryGetValue(n, out n_value))
                             {
-                                c_value.Flipped_Neighbours += 1;
+                                n_value.neighbours++;
                             }
                             else
                             {
-                                coords_new.Add(c_key, new Tile() { Flipped = false, Flipped_Neighbours = 1 });
+                                _coords_new.Add(n, new()
+                                {
+                                    active = true,
+                                    neighbours = 1
+                                });
                             }
                         }
                     }
@@ -210,49 +192,69 @@ namespace AdventOfCSharpCode
 
                 // Transfer over the new elements.
 
-                foreach (var c in coords_new)
+                foreach (var c in _coords_new)
                 {
-                    coords.Add(c.Key, c.Value);
+                    _coords.Add(c.Key, c.Value);
                 }
 
                 // Recalculate flipped status.
 
-                foreach (var c in coords)
+                foreach (var c in _coords.Values)
                 {
-                    if (c.Value.Flipped && (c.Value.Flipped_Neighbours == 0 || c.Value.Flipped_Neighbours > 2))
-                    {
-                        c.Value.Flipped = false;
-                    }
-                    else if (!c.Value.Flipped && c.Value.Flipped_Neighbours == 2)
-                    {
-                        c.Value.Flipped = true;
-                    }
+                    c.active = Coordinate.IsCoordinateActive_Day24(c);
                 }
             }
 
+            public Day24_Processor(int iterations)
+            {
+                _iterations = iterations;
+            }
+
+            public string Part1(IEnumerable<string> dp)
+            {
+                Reset();
+
+                foreach(var d in dp)
+                {
+                    var input = CreateTilePosition(d);
+                    Update(input);
+                }
+
+                var count = _coords.Values.Where(x => !x.active).Count();
+
+                return $"Inactive (flipped) squares - {count}";
+            }
+
+            public string Part2(IEnumerable<string> dp)
+            {
+                Reset();
+
+                foreach(var d in dp)
+                {
+                    var input = CreateTilePosition(d);
+                    Update(input);
+                }
+
+                for (var i = 0; i < _iterations; i++)
+                {
+                    DailyArt();
+                }
+
+                var count = _coords.Values.Where(x => !x.active).Count();
+
+                return $"Inactive (flipped) squares - {count}";
+            }
         }
+
         public class Day24
         {
             public static void Main(string[] args)
             {
-                var data = DataProcessing.Import(24);
-                var processor = new HashTableCoords();
+                var data = new FileDataProcessor(24);
+                var day = new Day24_Processor(100);
 
-                foreach(var d in data)
-                {
-                    processor.Update(new Coords(d));
-                }
-
-                Console.WriteLine("Total count - {0}", processor.Count);
-                Console.WriteLine("Total flipped - {0}", processor.Flipped);
-
-                for(int i=0; i < 100; i++)
-                {
-                    processor.DailyArt();
-                }
-
-                Console.WriteLine("Total count - {0}", processor.Count);
-                Console.WriteLine("Total flipped - {0}", processor.Flipped);
+                Console.WriteLine(day.Part1(data));
+                Console.WriteLine(day.Part2(data));
             }
         }
     }

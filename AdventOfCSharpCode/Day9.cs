@@ -100,16 +100,16 @@ namespace AdventOfCSharpCode
                 }
             }
 
-            public string Part1(IDataProcessor dp)
+            public string Part1(IEnumerable<string> dp)
             {
-                dp.Reset();
                 Reset();
-
-                while (dp.isNext)
+                var index = 0;
+                
+                foreach(var d in dp)
                 {
-                    if (int.TryParse(dp.Next, out var added))
+                    if (int.TryParse(d, out var added))
                     {
-                        if (dp.Index > _preamble_length)
+                        if (index++ > _preamble_length)
                         {
                             if (!IsAddition(added))
                             {
@@ -131,19 +131,19 @@ namespace AdventOfCSharpCode
             }
 
 
-            public string Part2(IDataProcessor dp)
+            public string Part2(IEnumerable<string> dp)
             {
-                dp.Reset();
                 Reset();
 
+                var index = 0;
                 bool lookup_found = false;
                 int lookup = 0;
 
-                while (dp.isNext)
+                foreach(var d in dp)
                 {
-                    if (int.TryParse(dp.Next, out var added))
+                    if (int.TryParse(d, out var added))
                     {
-                        if (dp.Index > _preamble_length)
+                        if (index++ > _preamble_length)
                         {
                             if (!IsAddition(added))
                             {
@@ -175,7 +175,7 @@ namespace AdventOfCSharpCode
         {
             public static void Main(string[] args)
             {
-                var data = new DataProcessor(9);
+                var data = new FileDataProcessor(9);
                 var day = new Day9_Processor(25);
 
                 Console.WriteLine(day.Part1(data));

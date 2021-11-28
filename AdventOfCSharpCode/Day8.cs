@@ -28,18 +28,17 @@ namespace AdventOfCSharpCode
                 _sources.Clear();
             }
 
-            private void Process(IDataProcessor dp)
+            private void Process(IEnumerable<string> dp)
             {
-                dp.Reset();
                 Reset();
 
                 var _index_source = 0;
 
                 // Extract all required info from dp.
 
-                while (dp.isNext)
+                foreach(var d in dp)
                 {
-                    var _instruction = new Instruction(dp.Next);
+                    var _instruction = new Instruction(d);
 
                     // Add instruction.
                     _instructions.Add(_instruction);
@@ -113,7 +112,7 @@ namespace AdventOfCSharpCode
             }
 
 
-            public string Part1(IDataProcessor dp)
+            public string Part1(IEnumerable<string> dp)
             {
                 Process(dp);
 
@@ -142,7 +141,7 @@ namespace AdventOfCSharpCode
                 return $"Part 1 result is {_accumulator}";
             }
 
-            public string Part2(IDataProcessor dp)
+            public string Part2(IEnumerable<string> dp)
             {
                 Process(dp);
 
@@ -302,7 +301,7 @@ namespace AdventOfCSharpCode
         {
             public static void Main(string[] args)
             {
-                var data = new DataProcessor(8);
+                var data = new FileDataProcessor(8);
                 var day = new Day8_Processor();
 
                 Console.WriteLine(day.Part1(data));

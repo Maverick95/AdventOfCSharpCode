@@ -1,5 +1,5 @@
 ﻿using AdventOfCSharpCode;
-using FakeItEasy;
+using AdventOfCSharpCode.Day8;
 using NUnit.Framework;
 using System.Linq;
 
@@ -24,8 +24,8 @@ namespace AdventOfCSharpCodeTest
             }, 5)]
             public void Part1_Should_Return_CorrectResult_ForInput(string[] data, int expected_result)
             {
-                var data_processor = DataProcessor.GenerateFakeDataProcessor(data);
-                var day_processor = new AdventOfCSharpCode.Day8.Day8_Processor();
+                StringDataProcessor data_processor = new(data);
+                Day8_Processor day_processor = new();
                 var result = day_processor.Part1(data_processor);
 
                 Assert.That(result, Is.EqualTo($"Part 1 result is {expected_result}"));
@@ -45,8 +45,8 @@ namespace AdventOfCSharpCodeTest
             }, 8)]
             public void Part2_Should_Return_CorrectResult_ForInput(string[] data, int expected_result)
             {
-                var data_processor = DataProcessor.GenerateFakeDataProcessor(data);
-                var day_processor = new AdventOfCSharpCode.Day8.Day8_Processor();
+                StringDataProcessor data_processor = new(data);
+                Day8_Processor day_processor = new();
                 var result = day_processor.Part2(data_processor);
 
                 Assert.That(result, Is.EqualTo($"Part 2 result is {expected_result}"));

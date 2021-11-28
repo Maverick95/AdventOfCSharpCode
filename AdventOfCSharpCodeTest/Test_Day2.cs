@@ -1,4 +1,5 @@
-﻿using AdventOfCSharpCode;
+﻿using AdventOfCSharpCode.Day2;
+using AdventOfCSharpCode;
 using FakeItEasy;
 using NUnit.Framework;
 
@@ -19,8 +20,8 @@ namespace AdventOfCSharpCodeTest
                     "2-9 c: ccccccccc",
                 };
 
-                var data_processor = DataProcessor.GenerateFakeDataProcessor(data);
-                var day_processor = new AdventOfCSharpCode.Day2.Day2_Processor();
+                StringDataProcessor data_processor = new(data);
+                Day2_Processor day_processor = new();
                 var result = day_processor.Part1(data_processor);
 
                 Assert.That(result, Is.EqualTo("Result! 2"));
@@ -36,8 +37,8 @@ namespace AdventOfCSharpCodeTest
                     "2-9 c: ccccccccc",
                 };
 
-                var data_processor = DataProcessor.GenerateFakeDataProcessor(data);
-                var day_processor = new AdventOfCSharpCode.Day2.Day2_Processor();
+                StringDataProcessor data_processor = new(data);
+                Day2_Processor day_processor = new();
                 var result = day_processor.Part2(data_processor);
 
                 Assert.That(result, Is.EqualTo("Result! 1"));

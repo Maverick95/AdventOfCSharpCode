@@ -1,7 +1,7 @@
-﻿using System;
+﻿using AdventOfCSharpCode.Helpers;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace AdventOfCSharpCode
@@ -17,10 +17,8 @@ namespace AdventOfCSharpCode
                 _iterations = iterations;
             }
 
-            private Dictionary<int[], Coordinate> Simulate(IDataProcessor dp, int dimensions)
+            private Dictionary<int[], Coordinate> Simulate(IEnumerable<string> dp, int dimensions)
             {
-                dp.Reset();
-
                 var comparer = new CoordinateComparer(dimensions, CoordinateComparer.GetHashCodeSum);
 
                 Dictionary<int[], Coordinate>
@@ -28,19 +26,20 @@ namespace AdventOfCSharpCode
                     conway_new = new(comparer),
                     conway_remove = new(comparer);
 
-                while (dp.isNext)
+                var y = 0;
+                foreach (var d in dp)
                 {
                     var x = 0;
-                    var y = dp.Index;
-                    var input = dp.Next;
-                    foreach (var c in input)
+                    foreach (var c in d)
                     {
-                        if (c == '#')
+                        if (c is '#')
                         {
                             conway.Add(CreateCoordinate(dimensions, x, y), new());
                         }
                         x++;
                     }
+
+                    y++;
                 }
 
                 // Main functionality.
@@ -61,16 +60,16 @@ namespace AdventOfCSharpCode
                     {
                         if (c.Value.active)
                         {
-                            var c_neighbours = new CoordinateNeighbourCollection(c.Key);
+                            CoordinateNeighbourCollection c_neighbours = new(c.Key);
                             foreach (var n in c_neighbours)
                             {
-                                if (conway.ContainsKey(n))
+                                if (conway.TryGetValue(n, out var n_value))
                                 {
-                                    conway[n].neighbours++;
+                                    n_value.neighbours++;
                                 }
-                                else if (conway_new.ContainsKey(n))
+                                else if (conway_new.TryGetValue(n, out n_value))
                                 {
-                                    conway_new[n].neighbours++;
+                                    n_value.neighbours++;
                                 }
                                 else
                                 {
@@ -95,7 +94,7 @@ namespace AdventOfCSharpCode
 
                     foreach (var c in conway)
                     {
-                        c.Value.active = Coordinate.IsCoordinateActive(c.Value);
+                        c.Value.active = Coordinate.IsCoordinateActive_Day17(c.Value);
 
                         if (!c.Value.active)
                         {
@@ -114,81 +113,18 @@ namespace AdventOfCSharpCode
                 return conway;
             }
 
-            public string Part1(IDataProcessor dp)
+            public string Part1(IEnumerable<string> dp)
             {
                 var conway = Simulate(dp, 3);
                 return $"Conway Cubes remaining - {conway.Count}";
             }
 
-            public string Part2(IDataProcessor dp)
+            public string Part2(IEnumerable<string> dp)
             {
                 var conway = Simulate(dp, 4);
                 return $"Conway Cubes remaining - {conway.Count}";
             }
 
-            private class CoordinateComparer : IEqualityComparer<int[]>
-            {
-                public static int GetHashCodeSum(int[] c)
-                {
-                    var result = 0;
-                    foreach (var i in c)
-                    {
-                        result += i;
-                    }
-
-                    return result;
-                }
-
-                private readonly int _size;
-                private Func<int[], int> _getHashCode;
-
-                public CoordinateComparer(int size, Func<int[], int> getHashCode)
-                {
-                    _size = size;
-                    _getHashCode = getHashCode;
-                }
-
-                public bool Equals(int[] c1, int[] c2)
-                {
-                    if (c1.Length != _size || c1.Length != c2.Length)
-                    {
-                        throw new ArgumentException("Your input is invalid.");
-                    }
-
-                    for (var i = 0; i < _size; i++)
-                    {
-                        if (c1[i] != c2[i])
-                        {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                }
-
-                public int GetHashCode(int[] c)
-                {
-                    if (c.Length != _size)
-                    {
-                        throw new ArgumentException("Your input is invalid.");
-                    }
-
-                    return _getHashCode(c);
-                }
-            }
-
-            private class Coordinate
-            {
-                public static bool IsCoordinateActive(Coordinate coord)
-                {
-                    return (coord.active && (coord.neighbours is 2 or 3)) ||
-                            (!coord.active && coord.neighbours is 3);
-                }
-
-                public int neighbours { get; set; } = 0;
-
-                public bool active { get; set; } = true;
-            }
 
             private static int[] CreateCoordinate(int length, int x, int y)
             {
@@ -316,7 +252,7 @@ namespace AdventOfCSharpCode
         {
             public static void Main(string[] args)
             {
-                var data = new DataProcessor(17);
+                var data = new FileDataProcessor(17);
                 var day = new Day17_Processor(6);
 
                 Console.WriteLine(day.Part1(data));

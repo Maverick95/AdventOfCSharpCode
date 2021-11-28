@@ -217,28 +217,26 @@ namespace AdventOfCSharpCode
 
         public class Day12_Processor: IDayProcessor
         {
-            public string Part1(IDataProcessor dp)
+            public string Part1(IEnumerable<string> dp)
             {
-                dp.Reset();
                 var ship_1 = new Ship_Part1();
 
-                while (dp.isNext)
+                foreach(var d in dp)
                 {
-                    var data = Instruction.Translate(dp.Next);
+                    var data = Instruction.Translate(d);
                     ship_1.Update(data);
                 }
 
                 return $"Part 1 result = {ship_1.Manhattan}";
             }
 
-            public string Part2(IDataProcessor dp)
+            public string Part2(IEnumerable<string> dp)
             {
-                dp.Reset();
                 var ship_2 = new Ship_Part2();
 
-                while (dp.isNext)
+                foreach(var d in dp)
                 {
-                    var data = Instruction.Translate(dp.Next);
+                    var data = Instruction.Translate(d);
                     ship_2.Update(data);
                 }
 
@@ -250,7 +248,7 @@ namespace AdventOfCSharpCode
         {
             public static void Main(string[] args)
             {
-                var data = new DataProcessor(12);
+                var data = new FileDataProcessor(12);
                 var day = new Day12_Processor();
 
                 Console.WriteLine(day.Part1(data));

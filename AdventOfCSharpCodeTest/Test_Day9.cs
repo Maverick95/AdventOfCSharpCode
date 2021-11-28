@@ -1,4 +1,5 @@
 ﻿using AdventOfCSharpCode;
+using AdventOfCSharpCode.Day9;
 using FakeItEasy;
 using NUnit.Framework;
 using System.Linq;
@@ -19,13 +20,9 @@ namespace AdventOfCSharpCodeTest
                 for (var i = 0; i < 25; i++) { data[i] = (i + 1).ToString(); }
                 data[25] = next.ToString();
 
-                var data_processor = DataProcessor.GenerateFakeDataProcessor(data);
-                var day_processor = new AdventOfCSharpCode.Day9.Day9_Processor(25);
+                StringDataProcessor data_processor = new(data);
+                Day9_Processor day_processor = new(25);
                 var result = day_processor.Part1(data_processor);
-
-                A.CallTo(() => data_processor.isNext).MustHaveHappened(27, Times.Exactly);
-                A.CallTo(() => data_processor.Index).MustHaveHappened(26, Times.Exactly);
-                A.CallTo(() => data_processor.Next).MustHaveHappened(26, Times.Exactly);
 
                 Assert.That(result, Is.EqualTo("No result found!"));
             }
@@ -38,13 +35,9 @@ namespace AdventOfCSharpCodeTest
                 for (var i = 0; i < 25; i++) { data[i] = (i + 1).ToString(); }
                 data[25] = next.ToString();
 
-                var data_processor = DataProcessor.GenerateFakeDataProcessor(data);
-                var day_processor = new AdventOfCSharpCode.Day9.Day9_Processor(25);
+                StringDataProcessor data_processor = new(data);
+                Day9_Processor day_processor = new(25);
                 var result = day_processor.Part1(data_processor);
-
-                A.CallTo(() => data_processor.isNext).MustHaveHappened(26, Times.Exactly);
-                A.CallTo(() => data_processor.Index).MustHaveHappened(26, Times.Exactly);
-                A.CallTo(() => data_processor.Next).MustHaveHappened(26, Times.Exactly);
 
                 Assert.That(result, Is.EqualTo($"Result found! {next}"));
             }
@@ -61,13 +54,9 @@ namespace AdventOfCSharpCodeTest
                 data[25] = (45).ToString();
                 data[26] = next.ToString();
 
-                var data_processor = DataProcessor.GenerateFakeDataProcessor(data);
-                var day_processor = new AdventOfCSharpCode.Day9.Day9_Processor(25);
+                StringDataProcessor data_processor = new(data);
+                Day9_Processor day_processor = new(25);
                 var result = day_processor.Part1(data_processor);
-
-                A.CallTo(() => data_processor.isNext).MustHaveHappened(28, Times.Exactly);
-                A.CallTo(() => data_processor.Index).MustHaveHappened(27, Times.Exactly);
-                A.CallTo(() => data_processor.Next).MustHaveHappened(27, Times.Exactly);
 
                 Assert.That(result, Is.EqualTo("No result found!"));
             }
@@ -82,13 +71,9 @@ namespace AdventOfCSharpCodeTest
                 data[25] = (45).ToString();
                 data[26] = next.ToString();
 
-                var data_processor = DataProcessor.GenerateFakeDataProcessor(data);
-                var day_processor = new AdventOfCSharpCode.Day9.Day9_Processor(25);
+                StringDataProcessor data_processor = new(data);
+                Day9_Processor day_processor = new(25);
                 var result = day_processor.Part1(data_processor);
-
-                A.CallTo(() => data_processor.isNext).MustHaveHappened(27, Times.Exactly);
-                A.CallTo(() => data_processor.Index).MustHaveHappened(27, Times.Exactly);
-                A.CallTo(() => data_processor.Next).MustHaveHappened(27, Times.Exactly);
 
                 Assert.That(result, Is.EqualTo($"Result found! {next}"));
             }
@@ -104,14 +89,9 @@ namespace AdventOfCSharpCodeTest
                     219,    299,    277,    309,    576
                 };
 
-                var data_processor = DataProcessor.GenerateFakeDataProcessor(
-                    data.Select(d => d.ToString()).ToArray());
-                var day_processor = new AdventOfCSharpCode.Day9.Day9_Processor(5);
+                StringDataProcessor data_processor = new(data.Select(d => d.ToString()).ToArray());
+                Day9_Processor day_processor = new(5);
                 var result = day_processor.Part1(data_processor);
-
-                A.CallTo(() => data_processor.isNext).MustHaveHappened(15, Times.Exactly);
-                A.CallTo(() => data_processor.Index).MustHaveHappened(15, Times.Exactly);
-                A.CallTo(() => data_processor.Next).MustHaveHappened(15, Times.Exactly);
 
                 Assert.That(result, Is.EqualTo($"Result found! 127"));
             }
@@ -127,16 +107,9 @@ namespace AdventOfCSharpCodeTest
                     219,    299,    277,    309,    576
                 };
 
-                var data_processor = DataProcessor.GenerateFakeDataProcessor(
-                   data.Select(d => d.ToString()).ToArray());
-                var day_processor = new AdventOfCSharpCode.Day9.Day9_Processor(5);
+                StringDataProcessor data_processor = new(data.Select(d => d.ToString()).ToArray());
+                Day9_Processor day_processor = new(5);
                 var result = day_processor.Part2(data_processor);
-
-                // This will stop after processing 15 elements.
-
-                A.CallTo(() => data_processor.isNext).MustHaveHappened(15, Times.Exactly);
-                A.CallTo(() => data_processor.Index).MustHaveHappened(15, Times.Exactly);
-                A.CallTo(() => data_processor.Next).MustHaveHappened(15, Times.Exactly);
 
                 Assert.That(result, Is.EqualTo($"Result found! 62"));
             }

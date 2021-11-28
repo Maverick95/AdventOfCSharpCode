@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Linq;
-using System.Collections.Generic;
-using System.Text;
 
+/*
 namespace AdventOfCSharpCode
 {
     namespace Day25
@@ -119,3 +118,4 @@ namespace AdventOfCSharpCode
         }
     }
 }
+*/

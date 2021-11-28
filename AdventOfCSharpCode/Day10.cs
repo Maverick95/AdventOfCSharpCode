@@ -47,13 +47,11 @@ namespace AdventOfCSharpCode
                 }
             }
 
-            public string Part1(IDataProcessor dp)
+            public string Part1(IEnumerable<string> dp)
             {
                 _difference.Clear();
-                dp.Reset();
-
-                var data = dp.Data
-                    .Select(d => int.Parse(d))
+                
+                var data = dp.Select(d => int.Parse(d))
                     .OrderBy(d => d);
 
                 foreach (var d in data)
@@ -70,7 +68,7 @@ namespace AdventOfCSharpCode
                 return $"Result! {_difference_1} * {_difference_3} = {_difference_1 * _difference_3}";
             }
 
-            public string Part2(IDataProcessor dp)
+            public string Part2(IEnumerable<string> dp)
             {
                 return "Part 2!";
             }
@@ -80,7 +78,7 @@ namespace AdventOfCSharpCode
         {
             public static void Main(string[] args)
             {
-                var data = new DataProcessor(10);
+                var data = new FileDataProcessor(10);
                 var day = new Day10_Processor();
 
                 Console.WriteLine(day.Part1(data));

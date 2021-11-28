@@ -1,9 +1,6 @@
 ﻿using AdventOfCSharpCode;
-using FakeItEasy;
+using AdventOfCSharpCode.Day10;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AdventOfCSharpCodeTest
 {
@@ -31,8 +28,8 @@ namespace AdventOfCSharpCodeTest
             }, 22, 10)]
             public void Part1_Examples_ReturnsCorrectResult(string[] data, int difference_1, int difference_3)
             {
-                var data_processor = DataProcessor.GenerateFakeDataProcessor(data);
-                var day_processor = new AdventOfCSharpCode.Day10.Day10_Processor();
+                StringDataProcessor data_processor = new(data);
+                Day10_Processor day_processor = new ();
                 var result = day_processor.Part1(data_processor);
 
                 Assert.That(result, Is.EqualTo($"Result! {difference_1} * {difference_3} = {difference_1 * difference_3}"));

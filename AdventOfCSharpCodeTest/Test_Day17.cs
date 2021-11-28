@@ -16,8 +16,8 @@ namespace AdventOfCSharpCodeTest
             [TestCase(new string[] { ".#.", "..#", "###" }, 6, 112)]
             public void Part1_ShouldReturn_Correct_Result_ForIterations(string[] data, int iterations, int expected_active)
             {
-                var data_processor = DataProcessor.GenerateFakeDataProcessor(data);
-                var day_processor = new Day17_Processor(iterations);
+                StringDataProcessor data_processor = new(data);
+                Day17_Processor day_processor = new(iterations);
                 var result = day_processor.Part1(data_processor);
 
                 var expected = $"Conway Cubes remaining - {expected_active}";
@@ -31,8 +31,8 @@ namespace AdventOfCSharpCodeTest
             [TestCase(new string[] { ".#.", "..#", "###" }, 6, 848)]
             public void Part2_ShouldReturn_Correct_Result_ForIterations(string[] data, int iterations, int expected_active)
             {
-                var data_processor = DataProcessor.GenerateFakeDataProcessor(data);
-                var day_processor = new Day17_Processor(iterations);
+                StringDataProcessor data_processor = new(data);
+                Day17_Processor day_processor = new(iterations);
                 var result = day_processor.Part2(data_processor);
 
                 var expected = $"Conway Cubes remaining - {expected_active}";
