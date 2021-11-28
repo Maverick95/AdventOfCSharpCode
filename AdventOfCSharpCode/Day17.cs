@@ -1,275 +1,327 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 namespace AdventOfCSharpCode
 {
-    class Day17
+    namespace Day17
     {
-        private class CoordComparer: IEqualityComparer<int[]>
+        public class Day17_Processor: IDayProcessor
         {
-            public bool Equals(int[] d1, int[] d2) => d1[0] == d2[0] && d1[1] == d2[1] && d1[2] == d2[2];
-            public int GetHashCode(int[] d)
+            private readonly int _iterations;
+
+            public Day17_Processor(int iterations)
             {
-                // Oh god it's awful.
-
-                var e =
-                    (200 * 200 * (d[0] + 100)) +
-                    (200 * (d[1] + 100)) +
-                    (d[2] + 100);
-
-                return e;
+                _iterations = iterations;
             }
-        }
 
-        private class CoordComparer_Part2: IEqualityComparer<int[]>
-        {
-            public bool Equals(int[] d1, int[] d2) => d1[0] == d2[0] && d1[1] == d2[1] && d1[2] == d2[2] && d1[3] == d2[3];
-            public int GetHashCode(int[] d)
+            private Dictionary<int[], Coordinate> Simulate(IDataProcessor dp, int dimensions)
             {
-                // Oh god it's awful.
+                dp.Reset();
 
-                var e =
-                    (200 * 200 * 200 * (d[0] + 100)) +
-                    (200 * 200 * (d[1] + 100)) +
-                    (200 * (d[2] + 100)) +
-                    (d[3] + 100);
+                var comparer = new CoordinateComparer(dimensions, CoordinateComparer.GetHashCodeSum);
 
-                return e;
-            }
-        }
+                Dictionary<int[], Coordinate>
+                    conway = new(comparer),
+                    conway_new = new(comparer),
+                    conway_remove = new(comparer);
 
-        private class CoordData
-        {
-            public int neighbours { get; set; } = 0;
-
-            public bool active { get; set; } = true;
-
-            public bool RemainActive
-            {
-                get
+                while (dp.isNext)
                 {
-                    return (active && (neighbours == 2 || neighbours == 3)) ||
-                        (!active && neighbours == 3);
-                }
-            }
-
-        }
-
-        public static void Main(string[] args)
-        {
-            Main_Part1(args);
-            Main_Part2(args);
-        }
-
-        private static void Main_Part1(string[] args)
-        {
-            // Part 1.
-
-            var conway = new Dictionary<int[], CoordData>(new CoordComparer());
-
-            var conway_data = DataProcessing.Import(17);
-
-            for (int y=0; y < conway_data.Length; y++)
-            {
-                var conway_y = conway_data[y];
-                for (int x=0; x < conway_y.Length; x++)
-                {
-                    if (conway_y[x] == '#')
+                    var x = 0;
+                    var y = dp.Index;
+                    var input = dp.Next;
+                    foreach (var c in input)
                     {
-                        conway.Add(new int[3] { x, y, 0 }, new CoordData());
+                        if (c == '#')
+                        {
+                            conway.Add(CreateCoordinate(dimensions, x, y), new());
+                        }
+                        x++;
                     }
                 }
-            }
 
-            // Main functionality.
+                // Main functionality.
 
-            for (int j = 1; j <= 6; j++)
-            {
-
-                // First pass - all elements currently active.
-
-                // Pass through and reset neighbours.
-
-                foreach (var c in conway)
+                for (int j = 0; j < _iterations; j++)
                 {
-                    c.Value.neighbours = 0;
-                }
+                    // Pass through and reset neighbours.
 
-                // Pass through and add on neighbours for each - adding in new elements if required.
-                // This time you'll need to check the active property.
-
-                var conway_new = new Dictionary<int[], CoordData>(new CoordComparer());
-
-                foreach (var c in conway)
-                {
-                    if (c.Value.active)
+                    foreach (var c in conway.Values)
                     {
-                        for (int x = c.Key[0] - 1; x <= c.Key[0] + 1; x++)
+                        c.neighbours = 0;
+                    }
+
+                    // Pass through and add on neighbours for each - adding in new elements if required.
+                    // This time you'll need to check the active property.
+
+                    foreach (var c in conway)
+                    {
+                        if (c.Value.active)
                         {
-                            for (int y = c.Key[1] - 1; y <= c.Key[1] + 1; y++)
+                            var c_neighbours = new CoordinateNeighbourCollection(c.Key);
+                            foreach (var n in c_neighbours)
                             {
-                                for (int z = c.Key[2] - 1; z <= c.Key[2] + 1; z++)
+                                if (conway.ContainsKey(n))
                                 {
-                                    if (x != c.Key[0] || y != c.Key[1] || z != c.Key[2])
+                                    conway[n].neighbours++;
+                                }
+                                else if (conway_new.ContainsKey(n))
+                                {
+                                    conway_new[n].neighbours++;
+                                }
+                                else
+                                {
+                                    conway_new.Add(n, new()
                                     {
-                                        // Look for element, insert as inactive if not there.
-                                        if (conway.ContainsKey(new int[] { x, y, z }))
-                                        {
-                                            conway[new int[] { x, y, z }].neighbours++;
-                                        }
-                                        else if (conway_new.ContainsKey(new int[] { x, y, z }))
-                                        {
-                                            conway_new[new int[] { x, y, z }].neighbours++;
-                                        }
-                                        else
-                                        {
-                                            conway_new.Add(new int[] { x, y, z }, new CoordData()
-                                            {
-                                                neighbours = 1,
-                                                active = false
-                                            });
-                                        }
-                                    }
+                                        neighbours = 1,
+                                        active = false
+                                    });
                                 }
                             }
                         }
                     }
-                }
 
-                foreach (var c in conway_new)
-                {
-                    conway.Add(c.Key, c.Value);
-                }
-
-                conway_new.Clear();
-
-                // Pass through and update status, remove.
-
-                foreach (var c in conway)
-                {
-                    c.Value.active = c.Value.RemainActive;
-
-                    if (!c.Value.active)
+                    foreach (var c in conway_new)
                     {
-                        conway_new.Add(c.Key, c.Value);
+                        conway.Add(c.Key, c.Value);
                     }
-                }
 
-                foreach (var c in conway_new)
-                {
-                    conway.Remove(c.Key);
-                }
-            }
+                    conway_new.Clear();
 
-            Console.WriteLine(string.Format("{0}", conway.Count));
-        }
+                    // Pass through and update status, remove.
 
-        private static void Main_Part2(string[] args)
-        {
-            // Part 2.
-
-            var conway = new Dictionary<int[], CoordData>(new CoordComparer_Part2());
-
-            var conway_data = DataProcessing.Import(17);
-
-            for (int y = 0; y < conway_data.Length; y++)
-            {
-                var conway_y = conway_data[y];
-                for (int x = 0; x < conway_y.Length; x++)
-                {
-                    if (conway_y[x] == '#')
+                    foreach (var c in conway)
                     {
-                        conway.Add(new int[4] { x, y, 0, 0 }, new CoordData());
-                    }
-                }
-            }
+                        c.Value.active = Coordinate.IsCoordinateActive(c.Value);
 
-            // Main functionality.
-
-            for (int j = 1; j <= 6; j++)
-            {
-
-                // First pass - all elements currently active.
-
-                // Pass through and reset neighbours.
-
-                foreach (var c in conway)
-                {
-                    c.Value.neighbours = 0;
-                }
-
-                // Pass through and add on neighbours for each - adding in new elements if required.
-                // This time you'll need to check the active property.
-
-                var conway_new = new Dictionary<int[], CoordData>(new CoordComparer_Part2());
-
-                foreach (var c in conway)
-                {
-                    if (c.Value.active)
-                    {
-                        for (int x = c.Key[0] - 1; x <= c.Key[0] + 1; x++)
+                        if (!c.Value.active)
                         {
-                            for (int y = c.Key[1] - 1; y <= c.Key[1] + 1; y++)
+                            conway_remove.Add(c.Key, c.Value);
+                        }
+                    }
+
+                    foreach (var c in conway_remove)
+                    {
+                        conway.Remove(c.Key);
+                    }
+
+                    conway_remove.Clear();
+                }
+
+                return conway;
+            }
+
+            public string Part1(IDataProcessor dp)
+            {
+                var conway = Simulate(dp, 3);
+                return $"Conway Cubes remaining - {conway.Count}";
+            }
+
+            public string Part2(IDataProcessor dp)
+            {
+                var conway = Simulate(dp, 4);
+                return $"Conway Cubes remaining - {conway.Count}";
+            }
+
+            private class CoordinateComparer : IEqualityComparer<int[]>
+            {
+                public static int GetHashCodeSum(int[] c)
+                {
+                    var result = 0;
+                    foreach (var i in c)
+                    {
+                        result += i;
+                    }
+
+                    return result;
+                }
+
+                private readonly int _size;
+                private Func<int[], int> _getHashCode;
+
+                public CoordinateComparer(int size, Func<int[], int> getHashCode)
+                {
+                    _size = size;
+                    _getHashCode = getHashCode;
+                }
+
+                public bool Equals(int[] c1, int[] c2)
+                {
+                    if (c1.Length != _size || c1.Length != c2.Length)
+                    {
+                        throw new ArgumentException("Your input is invalid.");
+                    }
+
+                    for (var i = 0; i < _size; i++)
+                    {
+                        if (c1[i] != c2[i])
+                        {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+
+                public int GetHashCode(int[] c)
+                {
+                    if (c.Length != _size)
+                    {
+                        throw new ArgumentException("Your input is invalid.");
+                    }
+
+                    return _getHashCode(c);
+                }
+            }
+
+            private class Coordinate
+            {
+                public static bool IsCoordinateActive(Coordinate coord)
+                {
+                    return (coord.active && (coord.neighbours is 2 or 3)) ||
+                            (!coord.active && coord.neighbours is 3);
+                }
+
+                public int neighbours { get; set; } = 0;
+
+                public bool active { get; set; } = true;
+            }
+
+            private static int[] CreateCoordinate(int length, int x, int y)
+            {
+                if (length < 1)
+                {
+                    throw new ArgumentException("Your input is invalid.");
+                }
+
+                var result = new int[length];
+                result[0] = x;
+                if (length > 1)
+                {
+                    result[1] = y;
+                    for (var i = 2; i < length; i++)
+                    {
+                        result[i] = 0;
+                    }
+                }
+
+                return result;
+            }
+
+            private class CoordinateNeighbourCollection: IEnumerable<int[]>
+            {
+                private readonly CoordinateNeighbourEnumerator _enumerator;
+                public CoordinateNeighbourCollection(int[] coord)
+                {
+                    _enumerator = new(coord);
+                }
+
+                IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+                public IEnumerator<int[]> GetEnumerator()
+                {
+                    return _enumerator;
+                }
+
+                private class CoordinateNeighbourEnumerator: IEnumerator<int[]>
+                {
+                    private int[] _coord = null;
+
+                    private readonly int[] _coord_original;
+                    private readonly IEqualityComparer<int[]> _comparer;
+                    private readonly int _length;
+
+                    public CoordinateNeighbourEnumerator(int[] coord)
+                    {
+                        if (coord.Length == 0)
+                        {
+                            throw new ArgumentException("Your input was invalid.");
+                        }
+                        _length = coord.Length;
+                        _coord_original = new int[_length];
+                        coord.CopyTo(_coord_original, 0);
+                        _comparer = new CoordinateComparer(_length, CoordinateComparer.GetHashCodeSum);
+                    }
+
+                    object IEnumerator.Current
+                    {
+                        get => Current;
+                    }
+
+                    public int[] Current
+                    {
+                        get
+                        {
+                            if (_coord is null) { return null; }
+                            var result = new int[_length];
+                            _coord.CopyTo(result, 0);
+                            return result;
+                        }
+                    }
+
+                    public bool MoveNext()
+                    {
+                        var next = false;
+
+                        if (_coord is null)
+                        {
+                            next = true;
+                            _coord = new int[_length];
+                            _coord_original
+                                .Select(x => x - 1)
+                                .ToArray()
+                                .CopyTo(_coord, 0);
+                        }
+                        else
+                        {
+                            for (var i = 1; i <= _length; i++)
                             {
-                                for (int z = c.Key[2] - 1; z <= c.Key[2] + 1; z++)
+                                if (_coord[_length - i] < _coord_original[_length - i] + 1)
                                 {
-                                    for (int w = c.Key[3] - 1; w <= c.Key[3] + 1; w++)
+                                    next = true;
+                                    _coord[_length - i]++;
+                                    _coord_original
+                                        .TakeLast(i - 1)
+                                        .Select(x => x - 1)
+                                        .ToArray()
+                                        .CopyTo(_coord, _length - i + 1);
+
+                                    if (_comparer.Equals(_coord, _coord_original))
                                     {
-                                        if (x != c.Key[0] || y != c.Key[1] || z != c.Key[2] || w != c.Key[3])
-                                        {
-                                            // Look for element, insert as inactive if not there.
-                                            if (conway.ContainsKey(new int[] { x, y, z, w }))
-                                            {
-                                                conway[new int[] { x, y, z, w }].neighbours++;
-                                            }
-                                            else if (conway_new.ContainsKey(new int[] { x, y, z, w }))
-                                            {
-                                                conway_new[new int[] { x, y, z, w }].neighbours++;
-                                            }
-                                            else
-                                            {
-                                                conway_new.Add(new int[] { x, y, z, w }, new CoordData()
-                                                {
-                                                    neighbours = 1,
-                                                    active = false
-                                                });
-                                            }
-                                        }
+                                        _coord[_length - 1]++;
                                     }
+
+                                    break;
                                 }
                             }
                         }
+
+                        return next;
                     }
-                }
 
-                foreach (var c in conway_new)
-                {
-                    conway.Add(c.Key, c.Value);
-                }
-
-                conway_new.Clear();
-
-                // Pass through and update status, remove.
-
-                foreach (var c in conway)
-                {
-                    c.Value.active = c.Value.RemainActive;
-
-                    if (!c.Value.active)
+                    public void Reset()
                     {
-                        conway_new.Add(c.Key, c.Value);
+                        _coord = null;
                     }
-                }
 
-                foreach (var c in conway_new)
-                {
-                    conway.Remove(c.Key);
+                    public void Dispose() { }
                 }
             }
+        }
 
-            Console.WriteLine(string.Format("{0}", conway.Count));
+        public class Day17
+        {
+            public static void Main(string[] args)
+            {
+                var data = new DataProcessor(17);
+                var day = new Day17_Processor(6);
+
+                Console.WriteLine(day.Part1(data));
+                Console.WriteLine(day.Part2(data));
+            }
         }
     }
 }

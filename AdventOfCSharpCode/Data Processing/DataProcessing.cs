@@ -6,7 +6,7 @@ namespace AdventOfCSharpCode
     public static class DataProcessing
     {
         private static string DataPath { get; } =
-            "C:\\Users\\nick.emmerson\\Work Unit Only\\VS Projects\\Advent of Code\\Data";
+            "C:\\Users\\Nick\\Documents\\Programming\\Advent of Code\\AdventOfCSharpCode\\AdventOfCSharpCode\\Data";
 
         public static string[] Import(int dayNumber)
         {

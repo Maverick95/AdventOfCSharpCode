@@ -1,9 +1,6 @@
 ﻿using AdventOfCSharpCode;
 using AdventOfCSharpCode.Day13;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AdventOfCSharpCodeTest
 {

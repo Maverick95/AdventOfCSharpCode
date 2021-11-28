@@ -14,7 +14,7 @@ namespace AdventOfCSharpCode
             public int minPlusMax { get; set; }
         }
 
-        public class Day9_Processor: iDayProcessor
+        public class Day9_Processor: IDayProcessor
         {
             private int _preamble_length { get; init; }
 
@@ -100,7 +100,7 @@ namespace AdventOfCSharpCode
                 }
             }
 
-            public string Part1(iDataProcessor dp)
+            public string Part1(IDataProcessor dp)
             {
                 dp.Reset();
                 Reset();
@@ -131,7 +131,7 @@ namespace AdventOfCSharpCode
             }
 
 
-            public string Part2(iDataProcessor dp)
+            public string Part2(IDataProcessor dp)
             {
                 dp.Reset();
                 Reset();

@@ -215,9 +215,9 @@ namespace AdventOfCSharpCode
             }
         }
 
-        public class Day12_Processor: iDayProcessor
+        public class Day12_Processor: IDayProcessor
         {
-            public string Part1(iDataProcessor dp)
+            public string Part1(IDataProcessor dp)
             {
                 dp.Reset();
                 var ship_1 = new Ship_Part1();
@@ -231,7 +231,7 @@ namespace AdventOfCSharpCode
                 return $"Part 1 result = {ship_1.Manhattan}";
             }
 
-            public string Part2(iDataProcessor dp)
+            public string Part2(IDataProcessor dp)
             {
                 dp.Reset();
                 var ship_2 = new Ship_Part2();

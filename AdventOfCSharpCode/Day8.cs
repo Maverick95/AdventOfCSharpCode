@@ -7,7 +7,7 @@ namespace AdventOfCSharpCode
 {
     namespace Day8
     {
-        public class Day8_Processor: iDayProcessor
+        public class Day8_Processor: IDayProcessor
         {
             // Set of instructions.
             private List<Instruction> _instructions { get; init; }
@@ -28,7 +28,7 @@ namespace AdventOfCSharpCode
                 _sources.Clear();
             }
 
-            private void Process(iDataProcessor dp)
+            private void Process(IDataProcessor dp)
             {
                 dp.Reset();
                 Reset();
@@ -113,7 +113,7 @@ namespace AdventOfCSharpCode
             }
 
 
-            public string Part1(iDataProcessor dp)
+            public string Part1(IDataProcessor dp)
             {
                 Process(dp);
 
@@ -142,7 +142,7 @@ namespace AdventOfCSharpCode
                 return $"Part 1 result is {_accumulator}";
             }
 
-            public string Part2(iDataProcessor dp)
+            public string Part2(IDataProcessor dp)
             {
                 Process(dp);
 

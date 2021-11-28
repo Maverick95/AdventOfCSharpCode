@@ -7,7 +7,7 @@ namespace AdventOfCSharpCode
 {
     namespace Day10
     {
-        public class Day10_Processor: iDayProcessor
+        public class Day10_Processor: IDayProcessor
         {
             private Dictionary<int, int> _difference { get; init; }
             private int _voltage;
@@ -47,7 +47,7 @@ namespace AdventOfCSharpCode
                 }
             }
 
-            public string Part1(iDataProcessor dp)
+            public string Part1(IDataProcessor dp)
             {
                 _difference.Clear();
                 dp.Reset();
@@ -70,7 +70,7 @@ namespace AdventOfCSharpCode
                 return $"Result! {_difference_1} * {_difference_3} = {_difference_1 * _difference_3}";
             }
 
-            public string Part2(iDataProcessor dp)
+            public string Part2(IDataProcessor dp)
             {
                 return "Part 2!";
             }

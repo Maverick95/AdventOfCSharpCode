@@ -40,7 +40,7 @@ namespace AdventOfCSharpCode
                 }
             }
         }
-        public class Day2_Processor : iDayProcessor
+        public class Day2_Processor : IDayProcessor
         {
             private static Regex rgx_password = new Regex("^[0-9]+-[0-9]+ [a-z]: [a-z]+$");
 
@@ -74,7 +74,7 @@ namespace AdventOfCSharpCode
 
             }
 
-            public string Part1(iDataProcessor dp)
+            public string Part1(IDataProcessor dp)
             {
                 var result = dp.Data
                     .Select(d => GetPassword(d))
@@ -85,7 +85,7 @@ namespace AdventOfCSharpCode
                 return $"Result! {result}";
             }
 
-            public string Part2(iDataProcessor dp)
+            public string Part2(IDataProcessor dp)
             {
                 var result = dp.Data
                     .Select(d => GetPassword(d))

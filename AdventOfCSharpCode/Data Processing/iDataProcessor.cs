@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace AdventOfCSharpCode
 {
-    public interface iDataProcessor
+    public interface IDataProcessor
     {
         public string Next { get; }
 

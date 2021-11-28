@@ -1,9 +1,9 @@
 ﻿namespace AdventOfCSharpCode
 {
-    public interface iDayProcessor
+    public interface IDayProcessor
     {
-        public string Part1(iDataProcessor dp);
+        public string Part1(IDataProcessor dp);
 
-        public string Part2(iDataProcessor dp);
+        public string Part2(IDataProcessor dp);
     }
 }

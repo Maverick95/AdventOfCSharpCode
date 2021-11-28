@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace AdventOfCSharpCode
 {
-    public class DataProcessor : iDataProcessor
+    public class DataProcessor : IDataProcessor
     {
-        public static iDataProcessor GenerateFakeDataProcessor(string[] data)
+        public static IDataProcessor GenerateFakeDataProcessor(string[] data)
         {
             /* Order of arguments called in the program loop is assumed to be -
              *
@@ -34,7 +34,7 @@ namespace AdventOfCSharpCode
                 throw new ArgumentException("Need to supply some data.");
             }
 
-            var processor = A.Fake<iDataProcessor>();
+            var processor = A.Fake<IDataProcessor>();
 
             // isNext
             A.CallTo(() => processor.isNext).Returns(false);
@@ -56,7 +56,7 @@ namespace AdventOfCSharpCode
             return processor;
         }
 
-        private static string DataPath { get; } = "C:\\DEV\\AdventOfCSharpCode\\AdventOfCSharpCode\\Data";
+        private static string DataPath { get; } = "C:\\Users\\Nick\\Documents\\Programming\\Advent of Code\\AdventOfCSharpCode\\AdventOfCSharpCode\\Data";
 
         private string[] _data { get; init; }
         private int _index;

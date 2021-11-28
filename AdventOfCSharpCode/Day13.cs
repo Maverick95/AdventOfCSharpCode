@@ -7,9 +7,9 @@ namespace AdventOfCSharpCode
 {
     namespace Day13
     {
-        public class Day13_Processor : iDayProcessor
+        public class Day13_Processor : IDayProcessor
         {
-            public string Part1(iDataProcessor dp)
+            public string Part1(IDataProcessor dp)
             {
                 if (dp.Data.Length == 2)
                 {
@@ -59,7 +59,7 @@ namespace AdventOfCSharpCode
                 throw new ArgumentException("Your input data is rubbish.");
             }
 
-            public string Part2(iDataProcessor dp)
+            public string Part2(IDataProcessor dp)
             {
                 return "Something";
             }
