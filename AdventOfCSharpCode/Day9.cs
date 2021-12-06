@@ -109,7 +109,7 @@ namespace AdventOfCSharpCode
                 {
                     if (int.TryParse(d, out var added))
                     {
-                        if (index++ > _preamble_length)
+                        if (index++ >= _preamble_length)
                         {
                             if (!IsAddition(added))
                             {
@@ -143,7 +143,7 @@ namespace AdventOfCSharpCode
                 {
                     if (int.TryParse(d, out var added))
                     {
-                        if (index++ > _preamble_length)
+                        if (index++ >= _preamble_length)
                         {
                             if (!IsAddition(added))
                             {
