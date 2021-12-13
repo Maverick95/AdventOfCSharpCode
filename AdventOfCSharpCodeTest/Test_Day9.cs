@@ -1,6 +1,5 @@
-﻿using AdventOfCSharpCode;
-using AdventOfCSharpCode.Day9;
-using FakeItEasy;
+﻿using AdventOfCSharpCodeHelpers;
+using AdventOfCSharpCode2020.Day9;
 using NUnit.Framework;
 using System.Linq;
 

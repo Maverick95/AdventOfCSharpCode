@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace AdventOfCSharpCode.Helpers
+namespace AdventOfCSharpCode2020.Helpers
 {
     public class CoordinateComparer : IEqualityComparer<int[]>
     {

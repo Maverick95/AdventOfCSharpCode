@@ -1,5 +1,5 @@
-﻿using AdventOfCSharpCode.Day2;
-using AdventOfCSharpCode;
+﻿using AdventOfCSharpCodeHelpers;
+using AdventOfCSharpCode2020.Day2;
 using FakeItEasy;
 using NUnit.Framework;
 

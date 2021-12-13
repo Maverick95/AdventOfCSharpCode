@@ -1,5 +1,5 @@
-﻿using AdventOfCSharpCode;
-using AdventOfCSharpCode.Day13;
+﻿using AdventOfCSharpCodeHelpers;
+using AdventOfCSharpCode2020.Day13;
 using NUnit.Framework;
 
 namespace AdventOfCSharpCodeTest

@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v5.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v5.0": {
+      "AdventOfCSharpCode2021/1.0.0": {
+        "dependencies": {
+          "AdventOfCSharpCodeHelpers": "1.0.0"
+        },
+        "runtime": {
+          "AdventOfCSharpCode2021.dll": {}
+        }
+      },
+      "AdventOfCSharpCodeHelpers/1.0.0": {
+        "runtime": {
+          "AdventOfCSharpCodeHelpers.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "AdventOfCSharpCode2021/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "AdventOfCSharpCodeHelpers/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

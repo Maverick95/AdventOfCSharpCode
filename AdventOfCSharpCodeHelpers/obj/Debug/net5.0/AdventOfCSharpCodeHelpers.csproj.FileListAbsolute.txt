@@ -1,0 +1,11 @@
+C:\DEV\AdventOfCSharpCode\AdventOfCSharpCodeHelpers\obj\Debug\net5.0\AdventOfCSharpCodeHelpers.GeneratedMSBuildEditorConfig.editorconfig
+C:\DEV\AdventOfCSharpCode\AdventOfCSharpCodeHelpers\obj\Debug\net5.0\AdventOfCSharpCodeHelpers.AssemblyInfoInputs.cache
+C:\DEV\AdventOfCSharpCode\AdventOfCSharpCodeHelpers\obj\Debug\net5.0\AdventOfCSharpCodeHelpers.AssemblyInfo.cs
+C:\DEV\AdventOfCSharpCode\AdventOfCSharpCodeHelpers\obj\Debug\net5.0\AdventOfCSharpCodeHelpers.csproj.CoreCompileInputs.cache
+C:\DEV\AdventOfCSharpCode\AdventOfCSharpCodeHelpers\bin\Debug\net5.0\AdventOfCSharpCodeHelpers.deps.json
+C:\DEV\AdventOfCSharpCode\AdventOfCSharpCodeHelpers\bin\Debug\net5.0\AdventOfCSharpCodeHelpers.dll
+C:\DEV\AdventOfCSharpCode\AdventOfCSharpCodeHelpers\bin\Debug\net5.0\ref\AdventOfCSharpCodeHelpers.dll
+C:\DEV\AdventOfCSharpCode\AdventOfCSharpCodeHelpers\bin\Debug\net5.0\AdventOfCSharpCodeHelpers.pdb
+C:\DEV\AdventOfCSharpCode\AdventOfCSharpCodeHelpers\obj\Debug\net5.0\AdventOfCSharpCodeHelpers.dll
+C:\DEV\AdventOfCSharpCode\AdventOfCSharpCodeHelpers\obj\Debug\net5.0\ref\AdventOfCSharpCodeHelpers.dll
+C:\DEV\AdventOfCSharpCode\AdventOfCSharpCodeHelpers\obj\Debug\net5.0\AdventOfCSharpCodeHelpers.pdb

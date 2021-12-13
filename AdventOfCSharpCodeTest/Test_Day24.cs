@@ -1,8 +1,6 @@
-﻿using AdventOfCSharpCode.Day24;
-using System;
-using System.Text;
+﻿using AdventOfCSharpCodeHelpers;
+using AdventOfCSharpCode2020.Day24;
 using NUnit.Framework;
-using AdventOfCSharpCode;
 
 namespace AdventOfCSharpCodeTest
 {

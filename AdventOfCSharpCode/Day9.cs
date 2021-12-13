@@ -1,8 +1,8 @@
-﻿using System;
+﻿using AdventOfCSharpCodeHelpers;
+using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace AdventOfCSharpCode
+namespace AdventOfCSharpCode2020
 {
     namespace Day9
     {
@@ -175,7 +175,7 @@ namespace AdventOfCSharpCode
         {
             public static void Main(string[] args)
             {
-                var data = new FileDataProcessor(9);
+                var data = new FileDataProcessor(2020, 9);
                 var day = new Day9_Processor(25);
 
                 Console.WriteLine(day.Part1(data));

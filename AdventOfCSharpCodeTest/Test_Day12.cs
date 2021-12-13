@@ -1,8 +1,6 @@
-using AdventOfCSharpCode;
-using AdventOfCSharpCode.Day12;
+using AdventOfCSharpCodeHelpers;
+using AdventOfCSharpCode2020.Day12;
 using NUnit.Framework;
-using System.Linq;
-using FakeItEasy;
 
 namespace AdventOfCSharpCodeTest
 {
