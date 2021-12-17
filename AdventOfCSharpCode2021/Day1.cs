@@ -59,7 +59,6 @@ namespace AdventOfCSharpCode2021
 
         public class Day1
         {
-
             public static void Main(string[] args)
             {
                 var data = new FileDataProcessor(2021, 1);

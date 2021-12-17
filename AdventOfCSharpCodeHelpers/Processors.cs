@@ -75,7 +75,7 @@ namespace AdventOfCSharpCodeHelpers
 
     public class FileDataProcessor : IEnumerable<string>
     {
-        private static string DataPath { get; } = "C:\\DEV\\AdventOfCSharpCode\\Data";
+        private static string DataPath { get; } = "C:\\Users\\Nick\\Documents\\Programming\\Advent of Code\\AdventOfCSharpCode\\Data";
 
         private string _path;
 
